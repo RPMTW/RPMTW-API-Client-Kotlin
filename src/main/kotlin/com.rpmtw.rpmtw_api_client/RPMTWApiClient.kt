@@ -1,7 +1,7 @@
 package com.rpmtw.rpmtw_api_client
 
 import com.rpmtw.rpmtw_api_client.exceptions.ClientUninitializedException
-import kotlin.jvm.JvmStatic
+import resources.AuthResource
 
 private var apiClient: RPMTWApiClient? = null
 
@@ -10,6 +10,15 @@ class RPMTWApiClient(development: Boolean = false, baseUrl: String? = null, toke
     private var globalToken: String? = null
     val baseUrl: String
         get() = apiBaseUrl
+
+    val apiGlobalToken: String?
+        get() = globalToken
+
+    init {
+        apiBaseUrl = baseUrl ?: if (development) "http://localhost:8080" else "https://api.rpmtw.com:2096"
+        apiClient = this
+        if (token != null) globalToken = token
+    }
 
     companion object {
         @JvmStatic
@@ -38,13 +47,6 @@ class RPMTWApiClient(development: Boolean = false, baseUrl: String? = null, toke
         globalToken = token
     }
 
-    val apiGlobalToken: String?
-        get() = globalToken
-
-
-    init {
-        apiBaseUrl = baseUrl ?: if (development) "http://localhost:8080" else "https://api.rpmtw.com:2096"
-        apiClient = this
-        if (token != null) globalToken = token
-    }
+    val authResource
+        get() = AuthResource(apiBaseUrl, globalToken)
 }

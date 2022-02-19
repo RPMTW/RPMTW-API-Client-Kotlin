@@ -1,9 +1,12 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     application
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("jvm") version "1.6.10"
     jacoco
 }
 val jacocoVersion = "0.8.7"
+val fuelVersion: String by project
 group = "com.rpmtw"
 version = "1.0.0"
 
@@ -15,67 +18,39 @@ jacoco {
     toolVersion = jacocoVersion
 }
 
-kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-        withJava()
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-
-            testLogging {
-                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-                events("passed", "failed", "skipped")
-            }
-        }
-    }
-    js(BOTH) {
-        browser {
-            commonWebpackConfig {
-                cssSupport.enabled = true
-            }
-        }
-    }
-    val hostOs = System.getProperty("os.name")
-    val isMingwX64 = hostOs.startsWith("Windows")
-    val nativeTarget = when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        isMingwX64 -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-    }
-
-
-    sourceSets {
-        val commonMain by getting
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
-        val jvmMain by getting
-        val jvmTest by getting
-        val jsMain by getting
-        val jsTest by getting
-        val nativeMain by getting
-        val nativeTest by getting
-    }
-}
-
-tasks.named("jvmTest").configure {
-    finalizedBy("jacocoJvmTestReport")
-}
-
-tasks.create<JacocoReport>("jacocoJvmTestReport") {
-    dependsOn("jvmTest")
+tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
         xml.outputLocation.set(file("build/coverage/coverage.xml"))
         csv.required.set(true)
         html.required.set(true)
     }
-    classDirectories.setFrom(file("${buildDir}/classes/kotlin/jvm/main"))
-    sourceDirectories.setFrom(files("src/commonMain", "src/jvmMain"))
-    executionData.setFrom(files("${buildDir}/jacoco/jvmTest.exec"))
+}
+
+tasks.test {
+    useJUnitPlatform()
+
+    testLogging {
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        events("passed", "failed", "skipped")
+    }
+
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+dependencies {
+    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
+    implementation("com.github.kittinunf.fuel:fuel-gson:$fuelVersion")
+    implementation("com.google.code.gson:gson:2.9.0")
+    testImplementation(kotlin("test"))
+}
+
+application {
+    mainClass.set("RPMTWApiClient.kt")
 }
