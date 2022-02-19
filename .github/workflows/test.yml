@@ -1,0 +1,30 @@
+name: Github Actions Kotlin Standard
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  test-and-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Before Install
+        run: |
+          chmod +x gradlew
+      - name: Generate coverage report
+        run: |
+          ./gradlew :cleanJvmTest :jvmTest :jacocoJvmTestReport
+      - name: Upload test report
+        uses: codecov/codecov-action@v2
+        with:
+          files: "build/coverage/coverage.xml"
