@@ -1,4 +1,4 @@
-name: Github Actions Kotlin Standard
+name: Test and Build
 on:
   push:
     branches:
