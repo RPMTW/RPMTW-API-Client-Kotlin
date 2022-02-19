@@ -1,11 +1,11 @@
 package com.rpmtw.rpmtw_api_client.resources
 
 import com.github.kittinunf.fuel.core.Request
-import com.github.kittinunf.fuel.coroutines.awaitObjectResult
-import com.github.kittinunf.fuel.gson.gsonDeserializer
+import com.github.kittinunf.fuel.coroutines.awaitStringResult
 import com.github.kittinunf.fuel.httpGet
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.auth.User
+import com.rpmtw.rpmtw_api_client.utilities.Utilities
 import kotlinx.coroutines.runBlocking
 
 class AuthResource(override val baseUrl: String, override val globalToken: String?) : BaseResource {
@@ -17,8 +17,8 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
                 request.header("Authorization", "Bearer ${globalToken ?: token}")
             }
 
-            request.awaitObjectResult(deserializable = gsonDeserializer<User>()).fold(
-                { return@fold it },
+            request.awaitStringResult().fold(
+                { return@fold Utilities.jsonDeserialize(it, User::class.java) },
                 {
                     if (it.response.statusCode == 404) {
                         throw ModelNotFoundException(User::class)
@@ -34,8 +34,8 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
             val url = "$baseUrl/auth/user/get-by-email/$email"
             val request: Request = url.httpGet()
 
-            request.awaitObjectResult(deserializable = gsonDeserializer<User>()).fold(
-                { return@fold it },
+            request.awaitStringResult().fold(
+                { return@fold Utilities.jsonDeserialize(it, User::class.java) },
                 {
                     if (it.response.statusCode == 404) {
                         throw ModelNotFoundException(User::class)

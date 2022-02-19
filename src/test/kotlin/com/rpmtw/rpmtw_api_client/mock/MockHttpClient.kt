@@ -1,9 +1,6 @@
 package com.rpmtw.rpmtw_api_client.mock
 
-import com.github.kittinunf.fuel.core.Client
-import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.core.Request
-import com.github.kittinunf.fuel.core.Response
+import com.github.kittinunf.fuel.core.*
 import com.github.kittinunf.fuel.core.requests.DefaultBody
 import com.google.gson.Gson
 import java.io.ByteArrayInputStream
@@ -13,12 +10,18 @@ class MockHttpClient {
         fun mockRequest(response: MockHttpResponse) {
             val httpClient = object : Client {
                 override fun executeRequest(request: Request): Response {
-                    return Response(
-                        body = if (response.data != null) DefaultBody({
+                    val body: Body = if (response.data != null) {
+                        DefaultBody({
                             ByteArrayInputStream(
-                                Gson().toJson(response.data).toByteArray()
+                                "{\"data\":${Gson().toJson(response.data)}}".toByteArray()
                             )
-                        }) else DefaultBody(),
+                        })
+                    } else {
+                        DefaultBody()
+                    }
+
+                    return Response(
+                        body = body,
                         statusCode = response.statusCode,
                         responseMessage = response.responseMessage,
                         url = request.url
