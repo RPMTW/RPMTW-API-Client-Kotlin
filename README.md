@@ -7,7 +7,7 @@
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
 
 fun main(args: Array<String>) {
-    val client = RPMTWApiClient.init()
+    val client = RPMTWApiClient.init() // Initialize RPMTW API Client
 }
 ```
 

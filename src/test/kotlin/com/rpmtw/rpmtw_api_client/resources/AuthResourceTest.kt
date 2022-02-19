@@ -60,6 +60,27 @@ internal class AuthResourceTest {
     }
 
     @Test
+    fun getUserByUUIDWithGlobalToken() {
+        val token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkJpdHRhbnkgTGFiZWxsZSIsImlhdCI6MTUxNjIzOTAyMn0.WId7rOn-Xkbc4yJdFUMlcTjpR38xRI1rtIJepYxzZHI"
+        val client = RPMTWApiClient.instance
+        client.setGlobalToken(token)
+
+        @Suppress("SpellCheckingInspection")
+        val mockUser = User(
+            uuid = "d97fce06-ed1f-4acd-8d8e-f3676a1cdeb6",
+            username = "Vida Harding",
+            email = "tangela_burlison9dj@grace.uu",
+            emailVerified = true
+        )
+        MockHttpClient.mockRequest(MockHttpResponse(data = mockUser))
+        runBlocking {
+            val user: User = client.authResource.getUserByUUID("me", token = token)
+            assertEquals(user, mockUser)
+        }
+    }
+
+    @Test
     fun getUserByUUIDNotFound() {
         MockHttpClient.mockRequest(MockHttpResponse(statusCode = 404, data = null))
 
@@ -112,7 +133,7 @@ internal class AuthResourceTest {
         val exception: ModelNotFoundException = assertFailsWith(block = {
             val client = RPMTWApiClient.instance
             runBlocking {
-                client.authResource.getUserByUUID("bobbiesue_dickenson2ba@someone.gif")
+                client.authResource.getUserByEmail("bobbiesue_dickenson2ba@someone.gif")
             }
         })
         assertContains(exception.message, "User not found")
