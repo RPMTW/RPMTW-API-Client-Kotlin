@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  test-and-upstream:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
