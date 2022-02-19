@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/RPMTW/RPMTW-API-Client-Kotlin/branch/master/graph/badge.svg?token=LLbPksdbHb)](https://codecov.io/gh/RPMTW/RPMTW-API-Client-Kotlin)
+[![codecov](https://codecov.io/gh/RPMTW/RPMTW-API-Client-Kotlin/branch/main/graph/badge.svg?token=LLbPksdbHb)](https://codecov.io/gh/RPMTW/RPMTW-API-Client-Kotlin)
 # RPMTW API Client For Kotlin
 
 ## Example
