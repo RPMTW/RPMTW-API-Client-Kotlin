@@ -20,7 +20,7 @@ data class User(
 
     companion object {
         @JvmStatic
-        fun getByUUID(uuid: String): User {
+        suspend fun getByUUID(uuid: String): User {
             return RPMTWApiClient.instance.authResource.getUserByUUID(uuid)
         }
     }
