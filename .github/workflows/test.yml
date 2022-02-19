@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  test:
+  test-coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,13 +18,30 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Before Install
-        run: |
-          chmod +x gradlew
       - name: Generate coverage report
         run: |
-          ./gradlew :cleanJvmTest :jvmTest
+          chmod +x gradlew
+          ./gradlew test
       - name: Upload test report
         uses: codecov/codecov-action@v2
         with:
           files: "build/coverage/coverage.xml"
+
+  test:
+    strategy:
+      matrix:
+        java-version: [ "8","11","16","17" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'adopt'
+      - name: Run tests
+        run: |
+          chmod +x gradlew
+          ./gradlew test
