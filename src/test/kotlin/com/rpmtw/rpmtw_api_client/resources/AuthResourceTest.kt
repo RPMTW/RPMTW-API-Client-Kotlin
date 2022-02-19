@@ -1,6 +1,7 @@
 package com.rpmtw.rpmtw_api_client.resources
 
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
+import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.mock.MockHttpClient
 import com.rpmtw.rpmtw_api_client.mock.MockHttpResponse
@@ -65,11 +66,23 @@ internal class AuthResourceTest {
         val exception: ModelNotFoundException = assertFailsWith(block = {
             val client = RPMTWApiClient.instance
             runBlocking {
-                val user: User = client.authResource.getUserByUUID("test")
-                println(user.username)
+                client.authResource.getUserByUUID("test")
             }
         })
         assertContains(exception.message, "User not found")
+    }
+
+    @Test
+    fun getUserByUUIDUnknownException() {
+        MockHttpClient.mockRequest(MockHttpResponse(statusCode = 400, data = null, responseMessage = "Bad Request"))
+
+        val exception: FailedGetDataException = assertFailsWith(block = {
+            val client = RPMTWApiClient.instance
+            runBlocking {
+                client.authResource.getUserByUUID("9b423288-a20a-48c9-8269-babc785509aa")
+            }
+        })
+        assertContains(exception.message, "Failed")
     }
 
     @Test
@@ -90,5 +103,31 @@ internal class AuthResourceTest {
             val user: User = client.authResource.getUserByEmail(uuid)
             assertEquals(user, mockUser)
         }
+    }
+
+    @Test
+    fun getUserByEmailNotFound() {
+        MockHttpClient.mockRequest(MockHttpResponse(statusCode = 404, data = null))
+
+        val exception: ModelNotFoundException = assertFailsWith(block = {
+            val client = RPMTWApiClient.instance
+            runBlocking {
+                client.authResource.getUserByUUID("bobbiesue_dickenson2ba@someone.gif")
+            }
+        })
+        assertContains(exception.message, "User not found")
+    }
+
+    @Test
+    fun getUserByEmailUnknownException() {
+        MockHttpClient.mockRequest(MockHttpResponse(statusCode = 400, data = null, responseMessage = "Bad Request"))
+
+        val exception: FailedGetDataException = assertFailsWith(block = {
+            val client = RPMTWApiClient.instance
+            runBlocking {
+                client.authResource.getUserByEmail("bobbiesue_dickenson2ba@someone.gif")
+            }
+        })
+        assertContains(exception.message, "Failed")
     }
 }

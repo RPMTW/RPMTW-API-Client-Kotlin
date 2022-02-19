@@ -3,6 +3,7 @@ package com.rpmtw.rpmtw_api_client.resources
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.coroutines.awaitStringResult
 import com.github.kittinunf.fuel.httpGet
+import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.auth.User
 import com.rpmtw.rpmtw_api_client.utilities.Utilities
@@ -24,7 +25,7 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
                         throw ModelNotFoundException(User::class)
                     }
 
-                    throw it
+                    throw FailedGetDataException(it)
                 })
         }
     }
@@ -41,7 +42,7 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
                         throw ModelNotFoundException(User::class)
                     }
 
-                    throw it
+                    throw FailedGetDataException(it)
                 })
         }
     }
