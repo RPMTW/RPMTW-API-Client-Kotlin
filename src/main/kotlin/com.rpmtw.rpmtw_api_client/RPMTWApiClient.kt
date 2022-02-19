@@ -1,7 +1,7 @@
 package com.rpmtw.rpmtw_api_client
 
 import com.rpmtw.rpmtw_api_client.exceptions.ClientUninitializedException
-import resources.AuthResource
+import com.rpmtw.rpmtw_api_client.resources.AuthResource
 
 private var apiClient: RPMTWApiClient? = null
 

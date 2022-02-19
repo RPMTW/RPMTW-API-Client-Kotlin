@@ -1,8 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     application
     kotlin("jvm") version "1.6.10"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     jacoco
 }
 val jacocoVersion = "0.8.7"
@@ -53,4 +55,10 @@ dependencies {
 
 application {
     mainClass.set("RPMTWApiClient.kt")
+}
+
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
 }
