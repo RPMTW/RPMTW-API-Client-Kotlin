@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  coverage:
+  Coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
         with:
           files: "build/coverage/coverage.xml"
 
-  test:
+  Test:
     strategy:
       matrix:
         java-version: [ "8","11","16","17" ]
@@ -44,7 +44,7 @@ jobs:
           chmod +x gradlew
           ./gradlew test
 
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +58,7 @@ jobs:
           chmod +x gradlew
           ./gradlew build
       - name: Upload artifacts
-        uses: actions/artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: RPMTW-API-Client-Kotlin-Build.zip
           path: "build/libs"
