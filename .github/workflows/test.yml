@@ -27,4 +27,4 @@ jobs:
       - name: Upload test report
         uses: codecov/codecov-action@v2
         with:
-          files: "build/coverage/coverage.csv"
+          files: "build/coverage/coverage.xml"

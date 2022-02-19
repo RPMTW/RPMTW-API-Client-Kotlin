@@ -68,8 +68,8 @@ tasks.create<JacocoReport>("jacocoJvmTestReport") {
     dependsOn("jvmTest")
     reports {
         xml.required.set(true)
+        xml.outputLocation.set(file("build/coverage/coverage.xml"))
         csv.required.set(true)
-        csv.outputLocation.set(file("build/coverage/coverage.csv"))
         html.required.set(true)
     }
     classDirectories.setFrom(file("${buildDir}/classes/kotlin/jvm/main"))
