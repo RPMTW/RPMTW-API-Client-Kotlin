@@ -1,5 +1,6 @@
 package com.rpmtw.rpmtw_api_client
 
+import com.rpmtw.rpmtw_api_client.exceptions.ClientUninitializedException
 import kotlin.jvm.JvmStatic
 
 private var apiClient: RPMTWApiClient? = null
@@ -12,14 +13,10 @@ class RPMTWApiClient(development: Boolean = false, baseUrl: String? = null, toke
 
     companion object {
         @JvmStatic
-        private val uninitializedException: Exception =
-            Exception("Client is not initialized, please call RPMTWApiClient.init() first")
-
-        @JvmStatic
         val instance: RPMTWApiClient
             get() {
                 if (apiClient == null) {
-                    throw uninitializedException
+                    throw ClientUninitializedException()
                 } else {
                     return apiClient!!
                 }
@@ -30,6 +27,10 @@ class RPMTWApiClient(development: Boolean = false, baseUrl: String? = null, toke
             val client = RPMTWApiClient(development, baseUrl, token)
             apiClient = client
             return client
+        }
+
+        fun clearCache() {
+            apiClient = null
         }
     }
 

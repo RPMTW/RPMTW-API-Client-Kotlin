@@ -63,6 +63,9 @@ kotlin {
     }
 }
 
+tasks.named("jvmTest").configure {
+    finalizedBy("jacocoJvmTestReport")
+}
 
 tasks.create<JacocoReport>("jacocoJvmTestReport") {
     dependsOn("jvmTest")

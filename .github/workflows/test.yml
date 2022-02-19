@@ -23,7 +23,7 @@ jobs:
           chmod +x gradlew
       - name: Generate coverage report
         run: |
-          ./gradlew :cleanJvmTest :jvmTest :jacocoJvmTestReport
+          ./gradlew :cleanJvmTest :jvmTest
       - name: Upload test report
         uses: codecov/codecov-action@v2
         with:

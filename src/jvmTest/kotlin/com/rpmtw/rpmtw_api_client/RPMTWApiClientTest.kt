@@ -1,9 +1,17 @@
 package com.rpmtw.rpmtw_api_client
 
+import com.rpmtw.rpmtw_api_client.exceptions.ClientUninitializedException
 import org.junit.jupiter.api.Test
+import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 internal class RPMTWApiClientTest {
+    @BeforeTest
+    fun setUp() {
+        RPMTWApiClient.clearCache()
+    }
+
     @Test
     fun getBaseUrl() {
         val client = RPMTWApiClient()
@@ -31,6 +39,7 @@ internal class RPMTWApiClientTest {
     @Test
     fun setGlobalToken() {
         val client = RPMTWApiClient()
+        @Suppress("SpellCheckingInspection")
         val token =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         client.setGlobalToken(token)
@@ -41,5 +50,13 @@ internal class RPMTWApiClientTest {
     fun getInstance() {
         val client = RPMTWApiClient()
         assertEquals(client, RPMTWApiClient.instance)
+    }
+
+    @Test
+    fun getInstanceUninitialized() {
+        assertFailsWith<ClientUninitializedException>(block = {
+            @Suppress("UNUSED_VARIABLE")
+            val client = RPMTWApiClient.instance
+        })
     }
 }
