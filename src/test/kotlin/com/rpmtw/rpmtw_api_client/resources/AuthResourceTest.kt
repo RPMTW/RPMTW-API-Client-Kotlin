@@ -66,4 +66,22 @@ internal class AuthResourceTest {
         })
         assertContains(exception.message, "User not found")
     }
+
+    @Test
+    suspend fun getUserByEmail() {
+        val uuid = "fcddfd48-e25a-4db8-849c-ac2c3dbce764"
+        val client = RPMTWApiClient.instance
+
+        @Suppress("SpellCheckingInspection")
+        val mockUser = User(
+            uuid = uuid,
+            username = "Maricela Orellana",
+            email = "phillis_fridleyhb@scuba.kaq",
+            emailVerified = true
+        )
+        MockHttpClient.mockRequest(MockHttpResponse(data = mockUser))
+
+        val user: User = client.authResource.getUserByEmail(uuid)
+        assertEquals(user, mockUser)
+    }
 }

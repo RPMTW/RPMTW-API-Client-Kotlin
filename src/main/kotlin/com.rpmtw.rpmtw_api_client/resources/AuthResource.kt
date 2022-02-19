@@ -28,4 +28,21 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
                 })
         }
     }
+
+    suspend fun getUserByEmail(email: String): User {
+        return runBlocking {
+            val url = "$baseUrl/auth/user/get-by-email/$email"
+            val request: Request = url.httpGet()
+
+            request.awaitObjectResult(deserializable = gsonDeserializer<User>()).fold(
+                { return@fold it },
+                {
+                    if (it.response.statusCode == 404) {
+                        throw ModelNotFoundException(User::class)
+                    }
+
+                    throw it
+                })
+        }
+    }
 }
