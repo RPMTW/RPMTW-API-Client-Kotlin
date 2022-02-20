@@ -2,7 +2,7 @@ package com.rpmtw.rpmtw_api_client.models.storage
 
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
 
-data class Storage(val uuid: String) {
+data class Storage(val uuid: String, val contentType: String, val type: String, val createAt: String) {
 
     companion object {
         fun getDownloadUrl(uuid: String, apiBaseUrl: String? = null): String {

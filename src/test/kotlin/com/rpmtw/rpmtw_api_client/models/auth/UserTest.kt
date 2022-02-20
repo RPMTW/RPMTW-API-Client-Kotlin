@@ -15,7 +15,6 @@ internal class UserTest {
         TestUtilities.setUp()
     }
 
-
     @Test
     fun getByUUID() {
         val uuid = "d97fce06-ed1f-4acd-8d8e-f3676a1cdeb6"
