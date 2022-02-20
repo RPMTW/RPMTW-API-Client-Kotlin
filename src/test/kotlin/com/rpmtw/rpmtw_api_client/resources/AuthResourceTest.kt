@@ -153,6 +153,7 @@ internal class AuthResourceTest {
         private const val username = "Marisella Jansen"
         private const val password = "Kr0wXsHtCs"
         private const val email = "alcides_brunetazv@total.el"
+        private const val avatarStorageUUID = "50df3c51-4966-4bc1-8ab1-1d741385a52f"
 
         private val mockUser = User(
             uuid = uuid, username = username, email = email, emailVerified = false
@@ -179,13 +180,13 @@ internal class AuthResourceTest {
             MockHttpClient.mockRequest(MockHttpResponse(data = json))
 
             runBlocking {
-                val result: CreateUserResult =
-                    client.authResource.createUser(username = username, password = password, email = email)
+                val result: CreateUserResult = client.authResource.createUser(
+                    username = username, password = password, email = email, avatarStorageUUID = avatarStorageUUID
+                )
 
                 assertEquals(result.user, mockUser)
             }
         }
-
 
         @Test
         fun createUserUnknownException() {
@@ -194,7 +195,9 @@ internal class AuthResourceTest {
 
             val exception: FailedGetDataException = assertFailsWith(block = {
                 runBlocking {
-                    client.authResource.createUser(username = username, password = password, email = email)
+                    client.authResource.createUser(
+                        username = username, password = password, email = email, avatarStorageUUID = avatarStorageUUID
+                    )
                 }
             })
             assertContains(exception.message, "Failed")

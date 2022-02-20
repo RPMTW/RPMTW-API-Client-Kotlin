@@ -1,11 +1,13 @@
 package com.rpmtw.rpmtw_api_client.models.auth
 
+import com.rpmtw.rpmtw_api_client.RPMTWApiClient
 import com.rpmtw.rpmtw_api_client.mock.MockHttpClient
 import com.rpmtw.rpmtw_api_client.mock.MockHttpResponse
 import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 
 internal class UserTest {
     @BeforeTest
@@ -29,7 +31,31 @@ internal class UserTest {
 
         runBlocking {
             val user: User = User.getByUUID(uuid)
-            kotlin.test.assertEquals(user, mockUser)
+            assertEquals(user, mockUser)
         }
+    }
+
+    @Test
+    fun getAvatarUrl() {
+        val user = User(
+            uuid = "b3affe3c-497d-4fa3-960b-d02e3fed8588",
+            username = "India Shelby",
+            email = "alvina_cress75pf@linux.cz",
+            emailVerified = true,
+            avatarStorageUUID = "5999271e-c50c-444f-9b6e-667974334fb7"
+        )
+        val apiBaseUrl: String = RPMTWApiClient.instance.apiBaseUrl
+        assertEquals(user.avatarUrl, "$apiBaseUrl/storage/${user.avatarStorageUUID}/download")
+    }
+
+    @Test
+    fun getAvatarUrlWithNoneAvatar() {
+        val user = User(
+            uuid = "b3affe3c-497d-4fa3-960b-d02e3fed8588",
+            username = "India Shelby",
+            email = "alvina_cress75pf@linux.cz",
+            emailVerified = true
+        )
+        assertEquals(user.avatarUrl, null)
     }
 }

@@ -42,6 +42,7 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
 
     /**
      * Get user info by email.
+     * @param email user's email
      * @see getUserByUUID
      */
     suspend fun getUserByEmail(email: String): User {

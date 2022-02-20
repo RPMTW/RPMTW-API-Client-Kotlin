@@ -16,19 +16,19 @@ internal class RPMTWApiClientTest {
     @Test
     fun getBaseUrl() {
         val client = RPMTWApiClient()
-        assertEquals(client.baseUrl, "https://api.rpmtw.com:2096")
+        assertEquals(client.apiBaseUrl, "https://api.rpmtw.com:2096")
     }
 
     @Test
     fun getBaseUrlWithDevelopment() {
         val client = RPMTWApiClient(development = true)
-        assertEquals(client.baseUrl, "http://localhost:8080")
+        assertEquals(client.apiBaseUrl, "http://localhost:8080")
     }
 
     @Test
     fun getBaseUrlCustom() {
         val client = RPMTWApiClient(baseUrl = "http://localhost:1234")
-        assertEquals(client.baseUrl, "http://localhost:1234")
+        assertEquals(client.apiBaseUrl, "http://localhost:1234")
     }
 
     @Test

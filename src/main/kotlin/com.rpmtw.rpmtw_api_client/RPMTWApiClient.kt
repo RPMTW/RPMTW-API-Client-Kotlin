@@ -6,16 +6,16 @@ import com.rpmtw.rpmtw_api_client.resources.AuthResource
 private var apiClient: RPMTWApiClient? = null
 
 class RPMTWApiClient(development: Boolean = false, baseUrl: String? = null, token: String? = null) {
-    private var apiBaseUrl: String
+    private var _apiBaseUrl: String
     private var globalToken: String? = null
-    val baseUrl: String
-        get() = apiBaseUrl
+    val apiBaseUrl: String
+        get() = _apiBaseUrl
 
     val apiGlobalToken: String?
         get() = globalToken
 
     init {
-        apiBaseUrl = baseUrl ?: if (development) "http://localhost:8080" else "https://api.rpmtw.com:2096"
+        _apiBaseUrl = baseUrl ?: if (development) "http://localhost:8080" else "https://api.rpmtw.com:2096"
         apiClient = this
         if (token != null) globalToken = token
     }
@@ -48,5 +48,5 @@ class RPMTWApiClient(development: Boolean = false, baseUrl: String? = null, toke
     }
 
     val authResource
-        get() = AuthResource(apiBaseUrl, globalToken)
+        get() = AuthResource(_apiBaseUrl, globalToken)
 }

@@ -1,6 +1,7 @@
 package com.rpmtw.rpmtw_api_client.models.auth
 
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
+import com.rpmtw.rpmtw_api_client.models.storage.Storage
 
 data class User(
     val uuid: String,
@@ -9,14 +10,14 @@ data class User(
     val emailVerified: Boolean,
     val avatarStorageUUID: String? = null,
 ) {
-//    val avatarUrl: String?
-//        get() {
-//            if (avatarStorageUUID != null){
-//                return Storage.getDownloadUrl(avatarStorageUUID)
-//            }else{
-//               return null
-//            }
-//        }
+    val avatarUrl: String?
+        get() {
+            return if (avatarStorageUUID != null) {
+                Storage.getDownloadUrl(avatarStorageUUID)
+            } else {
+                null
+            }
+        }
 
     companion object {
         @JvmStatic

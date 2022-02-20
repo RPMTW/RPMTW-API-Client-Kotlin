@@ -8,9 +8,9 @@ plugins {
 }
 val jacocoVersion = "0.8.7"
 val fuelVersion: String by project
+val libraryVersion: String by project
 group = "com.rpmtw"
-version = "1.0.0"
-
+version = libraryVersion
 repositories {
     mavenCentral()
 }
