@@ -148,6 +148,11 @@ internal class AuthResourceTest {
     }
 
     object CreateUser {
+        @BeforeTest
+        fun setUp() {
+            TestUtilities.setUp()
+        }
+
         private const val uuid = "088971ab-371f-49ea-84cc-c8a41cb31519"
 
         private const val username = "Marisella Jansen"
@@ -156,7 +161,11 @@ internal class AuthResourceTest {
         private const val avatarStorageUUID = "50df3c51-4966-4bc1-8ab1-1d741385a52f"
 
         private val mockUser = User(
-            uuid = uuid, username = username, email = email, emailVerified = false
+            uuid = uuid,
+            username = username,
+            email = email,
+            emailVerified = false,
+            avatarStorageUUID = avatarStorageUUID
         )
         private val json = JsonObject()
         private val data = JsonObject()
@@ -167,6 +176,7 @@ internal class AuthResourceTest {
             data.addProperty("password", password)
             data.addProperty("email", email)
             data.addProperty("emailVerified", false)
+            data.addProperty("avatarStorageUUID", avatarStorageUUID)
             data.addProperty(
                 "token",
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYWxtZXJzIFB1cmR1ZSIsImlhdCI6MTUxNjIzOTAyMn0.e4PhP9tdymUQTzrNRiPDagyHWQawv2Q1JkrdMA_b9Bg"

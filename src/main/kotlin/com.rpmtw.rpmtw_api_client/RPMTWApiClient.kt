@@ -2,6 +2,7 @@ package com.rpmtw.rpmtw_api_client
 
 import com.rpmtw.rpmtw_api_client.exceptions.ClientUninitializedException
 import com.rpmtw.rpmtw_api_client.resources.AuthResource
+import com.rpmtw.rpmtw_api_client.resources.StorageResource
 
 private var apiClient: RPMTWApiClient? = null
 
@@ -49,4 +50,6 @@ class RPMTWApiClient(development: Boolean = false, baseUrl: String? = null, toke
 
     val authResource
         get() = AuthResource(_apiBaseUrl, globalToken)
+    val storageResource
+        get() = StorageResource(_apiBaseUrl, globalToken)
 }

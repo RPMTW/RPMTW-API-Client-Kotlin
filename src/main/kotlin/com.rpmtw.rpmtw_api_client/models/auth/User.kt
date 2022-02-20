@@ -10,6 +10,11 @@ data class User(
     val emailVerified: Boolean,
     val avatarStorageUUID: String? = null,
 ) {
+    /**
+     * Get the user's avatar url.
+     * if the user has no avatar, it will return null.
+     * @see Storage.getDownloadUrl
+     */
     val avatarUrl: String?
         get() {
             return if (avatarStorageUUID != null) {
