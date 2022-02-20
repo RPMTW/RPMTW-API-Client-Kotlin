@@ -147,70 +147,72 @@ internal class AuthResourceTest {
         assertContains(exception.message, "Failed")
     }
 
-    object CreateUser {
-        @BeforeTest
-        fun setUp() {
-            TestUtilities.setUp()
-        }
 
-        private const val uuid = "088971ab-371f-49ea-84cc-c8a41cb31519"
+}
 
-        private const val username = "Marisella Jansen"
-        private const val password = "Kr0wXsHtCs"
-        private const val email = "alcides_brunetazv@total.el"
-        private const val avatarStorageUUID = "50df3c51-4966-4bc1-8ab1-1d741385a52f"
+internal class CreateUser {
+    @BeforeTest
+    fun setUp() {
+        TestUtilities.setUp()
+    }
 
-        private val mockUser = User(
-            uuid = uuid,
-            username = username,
-            email = email,
-            emailVerified = false,
-            avatarStorageUUID = avatarStorageUUID
+    private val uuid = "088971ab-371f-49ea-84cc-c8a41cb31519"
+
+    private val username = "Marisella Jansen"
+    private val password = "Kr0wXsHtCs"
+    private val email = "alcides_brunetazv@total.el"
+    private val avatarStorageUUID = "50df3c51-4966-4bc1-8ab1-1d741385a52f"
+
+    private val mockUser = User(
+        uuid = uuid,
+        username = username,
+        email = email,
+        emailVerified = false,
+        avatarStorageUUID = avatarStorageUUID
+    )
+    private val json = JsonObject()
+    private val data = JsonObject()
+
+    init {
+        data.addProperty("uuid", uuid)
+        data.addProperty("username", username)
+        data.addProperty("password", password)
+        data.addProperty("email", email)
+        data.addProperty("emailVerified", false)
+        data.addProperty("avatarStorageUUID", avatarStorageUUID)
+        data.addProperty(
+            "token",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYWxtZXJzIFB1cmR1ZSIsImlhdCI6MTUxNjIzOTAyMn0.e4PhP9tdymUQTzrNRiPDagyHWQawv2Q1JkrdMA_b9Bg"
         )
-        private val json = JsonObject()
-        private val data = JsonObject()
+        json.add("data", data)
+    }
 
-        init {
-            data.addProperty("uuid", uuid)
-            data.addProperty("username", username)
-            data.addProperty("password", password)
-            data.addProperty("email", email)
-            data.addProperty("emailVerified", false)
-            data.addProperty("avatarStorageUUID", avatarStorageUUID)
-            data.addProperty(
-                "token",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYWxtZXJzIFB1cmR1ZSIsImlhdCI6MTUxNjIzOTAyMn0.e4PhP9tdymUQTzrNRiPDagyHWQawv2Q1JkrdMA_b9Bg"
+    @Test
+    fun createUser() {
+        val client = RPMTWApiClient.instance
+        MockHttpClient.mockRequest(MockHttpResponse(data = json))
+
+        runBlocking {
+            val result: CreateUserResult = client.authResource.createUser(
+                username = username, password = password, email = email, avatarStorageUUID = avatarStorageUUID
             )
-            json.add("data", data)
+
+            assertEquals(result.user, mockUser)
         }
+    }
 
-        @Test
-        fun createUser() {
-            val client = RPMTWApiClient.instance
-            MockHttpClient.mockRequest(MockHttpResponse(data = json))
+    @Test
+    fun createUserUnknownException() {
+        val client = RPMTWApiClient.instance
+        MockHttpClient.mockRequest(MockHttpResponse(statusCode = 400, data = null, responseMessage = "Bad Request"))
 
+        val exception: FailedGetDataException = assertFailsWith(block = {
             runBlocking {
-                val result: CreateUserResult = client.authResource.createUser(
+                client.authResource.createUser(
                     username = username, password = password, email = email, avatarStorageUUID = avatarStorageUUID
                 )
-
-                assertEquals(result.user, mockUser)
             }
-        }
-
-        @Test
-        fun createUserUnknownException() {
-            val client = RPMTWApiClient.instance
-            MockHttpClient.mockRequest(MockHttpResponse(statusCode = 400, data = null, responseMessage = "Bad Request"))
-
-            val exception: FailedGetDataException = assertFailsWith(block = {
-                runBlocking {
-                    client.authResource.createUser(
-                        username = username, password = password, email = email, avatarStorageUUID = avatarStorageUUID
-                    )
-                }
-            })
-            assertContains(exception.message, "Failed")
-        }
+        })
+        assertContains(exception.message, "Failed")
     }
 }
