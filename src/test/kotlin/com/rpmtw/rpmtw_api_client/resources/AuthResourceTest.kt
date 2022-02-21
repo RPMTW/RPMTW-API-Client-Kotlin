@@ -146,8 +146,6 @@ internal class AuthResourceTest {
         })
         assertContains(exception.message, "Failed")
     }
-
-
 }
 
 internal class CreateUser {

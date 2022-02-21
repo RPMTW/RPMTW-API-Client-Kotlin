@@ -9,14 +9,14 @@ import com.rpmtw.rpmtw_api_client.models.storage.Storage
 import com.rpmtw.rpmtw_api_client.utilities.Utilities
 import kotlinx.coroutines.runBlocking
 
-class StorageResource(override val baseUrl: String, override val globalToken: String?) : BaseResource {
+class StorageResource(override val apiBaseUrl: String, override val globalToken: String?) : BaseResource {
     /**
      * Get storage info by uuid.
      * @param uuid uuid of the storage
      */
     suspend fun getStorage(uuid: String): Storage {
         return runBlocking {
-            val url = "$baseUrl/storage/$uuid"
+            val url = "$apiBaseUrl/storage/$uuid"
             val request: Request = url.httpGet()
 
             request.awaitStringResult().fold({ return@fold Utilities.jsonDeserialize(it, Storage::class.java) }, {

@@ -15,7 +15,7 @@ import com.rpmtw.rpmtw_api_client.models.auth.User
 import com.rpmtw.rpmtw_api_client.utilities.Utilities
 import kotlinx.coroutines.runBlocking
 
-class AuthResource(override val baseUrl: String, override val globalToken: String?) : BaseResource {
+class AuthResource(override val apiBaseUrl: String, override val globalToken: String?) : BaseResource {
     /**
      * Get user info by uuid.
      * @param uuid user's uuid (When uuid is **me**, use token to get the user info of the token)
@@ -24,7 +24,7 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
      */
     suspend fun getUserByUUID(uuid: String, token: String? = null): User {
         return runBlocking {
-            val url = "$baseUrl/auth/user/$uuid"
+            val url = "$apiBaseUrl/auth/user/$uuid"
             var request: Request = url.httpGet()
             if (globalToken != null || token != null) {
                 request = request.header("Authorization", "Bearer ${globalToken ?: token}")
@@ -47,7 +47,7 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
      */
     suspend fun getUserByEmail(email: String): User {
         return runBlocking {
-            val url = "$baseUrl/auth/user/get-by-email/$email"
+            val url = "$apiBaseUrl/auth/user/get-by-email/$email"
             val request: Request = url.httpGet()
 
             request.awaitStringResult().fold({ return@fold Utilities.jsonDeserialize(it, User::class.java) }, {
@@ -71,7 +71,7 @@ class AuthResource(override val baseUrl: String, override val globalToken: Strin
         username: String, password: String, email: String, avatarStorageUUID: String? = null
     ): CreateUserResult {
         return runBlocking {
-            val url = "$baseUrl/auth/user/create"
+            val url = "$apiBaseUrl/auth/user/create"
 
             val gson = Gson()
             val json = JsonObject()

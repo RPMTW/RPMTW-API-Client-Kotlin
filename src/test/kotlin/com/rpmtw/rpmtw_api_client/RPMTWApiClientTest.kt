@@ -14,22 +14,42 @@ internal class RPMTWApiClientTest {
     }
 
     @Test
-    fun getBaseUrl() {
+    fun getApiBaseUrl() {
         val client = RPMTWApiClient()
         assertEquals(client.apiBaseUrl, "https://api.rpmtw.com:2096")
     }
 
     @Test
-    fun getBaseUrlWithDevelopment() {
+    fun getApiBaseUrlWithDevelopment() {
         val client = RPMTWApiClient(development = true)
         assertEquals(client.apiBaseUrl, "http://localhost:8080")
     }
 
+
     @Test
-    fun getBaseUrlCustom() {
-        val client = RPMTWApiClient(baseUrl = "http://localhost:1234")
+    fun getApiBaseUrlCustom() {
+        val client = RPMTWApiClient(apiBaseUrl = "http://localhost:1234")
         assertEquals(client.apiBaseUrl, "http://localhost:1234")
     }
+
+    @Test
+    fun getCosmicChatBaseUrl() {
+        val client = RPMTWApiClient()
+        assertEquals(client.cosmicChatBaseUrl, "https://api.rpmtw.com:2087")
+    }
+
+    @Test
+    fun getCosmicChatBaseUrlWithDevelopment() {
+        val client = RPMTWApiClient(development = true)
+        assertEquals(client.cosmicChatBaseUrl, "http://localhost:2087")
+    }
+
+    @Test
+    fun getCosmicChatBaseUrlCustom() {
+        val client = RPMTWApiClient(cosmicChatBaseUrl = "http://localhost:2345")
+        assertEquals(client.cosmicChatBaseUrl, "http://localhost:2345")
+    }
+
 
     @Test
     fun init() {
@@ -40,7 +60,8 @@ internal class RPMTWApiClientTest {
     @Test
     fun initWithToken() {
         @Suppress("SpellCheckingInspection")
-        val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlcmVuY2UgTWVuZGVsIiwiaWF0IjoxNTE2MjM5MDIyfQ.KLB9CRh2C43pD6Fz37EswpYtR0SO8HSuxpseOR2UxGw"
+        val token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlcmVuY2UgTWVuZGVsIiwiaWF0IjoxNTE2MjM5MDIyfQ.KLB9CRh2C43pD6Fz37EswpYtR0SO8HSuxpseOR2UxGw"
         val client = RPMTWApiClient.init(token = token)
         assertEquals(client, RPMTWApiClient.instance)
     }

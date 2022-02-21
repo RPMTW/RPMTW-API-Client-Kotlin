@@ -50,7 +50,8 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel-gson:$fuelVersion")
     implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
     implementation("com.google.code.gson:gson:2.9.0")
-    testImplementation(kotlin("test"))
+    implementation("io.socket:socket.io-client:1.0.1")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
 }
 
 application {

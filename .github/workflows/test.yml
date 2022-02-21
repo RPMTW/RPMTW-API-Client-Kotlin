@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
   Coverage:
     runs-on: ubuntu-latest
@@ -39,6 +40,35 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: 'adopt'
+
+      # Server
+      - uses: actions/checkout@v2
+        with:
+          repository: "RPMTW/RPMTW-Server"
+          path: "server"
+
+      - name: Cache Dart
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/dart-sdk
+          key: ${{ runner.os }}-dart-2.16.0-134.5.beta
+      # https://dart.dev/get-dart/archive
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: 2.16.1
+      - name: Install dependencies
+        run: |
+          dart pub get
+          dart pub global activate coverage
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+      - name: Start MongoDB 5.0
+        uses: supercharge/mongodb-github-action@1.7.0
+        with:
+          mongodb-version: 5.0
+      - name: Start RPMTW Server
+        run: dart run server/bin/server.dart RPMTW_SERVER_TEST_MODE=TRUE
+
+      # Client
       - name: Run tests
         run: |
           chmod +x gradlew
