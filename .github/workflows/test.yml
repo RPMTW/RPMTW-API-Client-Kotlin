@@ -100,8 +100,8 @@ jobs:
           mongodb-version: 5.0
       - name: Start RPMTW Server
         run: |
-        cd ${{ github.workspace }}/server
-        dart run bin/server.dart RPMTW_SERVER_TEST_MODE=TRUE
+          cd ${{ github.workspace }}/server
+          dart run bin/server.dart RPMTW_SERVER_TEST_MODE=TRUE
 
       # Client
       - name: Run tests
