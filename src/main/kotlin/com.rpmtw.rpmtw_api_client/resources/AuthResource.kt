@@ -88,7 +88,7 @@ class AuthResource(override val apiBaseUrl: String, override val globalToken: St
                 val user: User = Utilities.jsonDeserialize(it, User::class.java)
                 val jsonObject: JsonObject = JsonParser.parseString(it).asJsonObject
 
-                return@fold CreateUserResult(jsonObject.getAsJsonObject("data")["token"].asString, user)
+                return@fold CreateUserResult(jsonObject["data"].asJsonObject["token"].asString, user)
             }, {
                 throw FailedGetDataException(it)
             })
