@@ -2,6 +2,7 @@ package com.rpmtw.rpmtw_api_client.mock
 
 import com.github.kittinunf.fuel.core.*
 import com.github.kittinunf.fuel.core.requests.DefaultBody
+import com.github.kittinunf.fuel.toolbox.HttpClient
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import java.io.ByteArrayInputStream
@@ -27,6 +28,8 @@ class MockHttpClient {
                     } else {
                         body = DefaultBody()
                     }
+                    FuelManager.instance.client =
+                        HttpClient(hook = FuelManager.instance.hook, proxy = FuelManager.instance.proxy)
 
                     return Response(
                         body = body,
