@@ -160,11 +160,11 @@ class CosmicChatResource(
 private class TimestampAdapter : TypeAdapter<Timestamp>() {
     @Throws(IOException::class)
     override fun read(`in`: JsonReader): Timestamp {
-        return Timestamp(`in`.nextLong() * 1000) // convert seconds to milliseconds
+        return Timestamp(`in`.nextLong())
     }
 
     @Throws(IOException::class)
     override fun write(out: JsonWriter, timestamp: Timestamp) {
-        out.value(timestamp.time / 1000) // convert milliseconds to seconds
+        out.value(timestamp.time)
     }
 }
