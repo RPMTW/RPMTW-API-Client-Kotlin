@@ -192,14 +192,13 @@ internal class CosmicChatResourceTest {
     fun getMessage() {
         val uuid = "d63f30e9-77c4-4191-9ee1-e72257c9e804"
         val client = RPMTWApiClient.instance
-
         val mockMessage = CosmicChatMessage(
             uuid = uuid,
             username = "Maleah Lasky",
-            message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            message = "Hello, world!",
             nickname = "Meyer",
             avatarUrl = "https://deadlyjptynabmauzn.id",
-            sentAt = Timestamp(System.currentTimeMillis()),
+            sentAt = Timestamp(1645628537000),
             userType = CosmicChatUserType.minecraft,
             replyMessageUUID = "94249836-e9e5-4c6f-9436-6655a0e111d8"
         )

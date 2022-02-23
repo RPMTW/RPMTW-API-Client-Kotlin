@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     jacoco
+    `maven-publish`
 }
 val jacocoVersion = "0.8.7"
 val fuelVersion: String by project
@@ -61,5 +62,17 @@ application {
 tasks {
     build {
         dependsOn(shadowJar)
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = group.toString()
+            artifactId = "rpmtw-api-client"
+            version = libraryVersion
+
+            from(components["java"])
+        }
     }
 }
