@@ -1,12 +1,20 @@
 package com.rpmtw.rpmtw_api_client.resources
 
+import com.github.kittinunf.fuel.core.Request
+import com.github.kittinunf.fuel.coroutines.awaitString
+import com.github.kittinunf.fuel.coroutines.awaitStringResult
+import com.github.kittinunf.fuel.httpGet
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
+import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
+import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatMessage
+import com.rpmtw.rpmtw_api_client.utilities.Utilities
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.engineio.client.Transport
@@ -153,6 +161,38 @@ class CosmicChatResource(
                 .create()
             val message: CosmicChatMessage = gson.fromJson(json, CosmicChatMessage::class.java)
             handler(message)
+        }
+    }
+
+    /**
+     * Get message by message uuid
+     * @param uuid message uuid
+     */
+    @Throws(FailedGetDataException::class)
+    suspend fun getMessage(uuid: String): CosmicChatMessage {
+        return runBlocking {
+            val url = "$apiBaseUrl/cosmic-chat/view/$uuid"
+            val request: Request = url.httpGet()
+
+            request.awaitStringResult()
+                .fold({ return@fold Utilities.jsonDeserialize(it, CosmicChatMessage::class.java) }, {
+                    if (it.response.statusCode == 404) {
+                        throw ModelNotFoundException(CosmicChatMessage::class)
+                    }
+
+                    throw FailedGetDataException(it)
+                })
+        }
+    }
+
+    /**
+     * Get cosmic chat info (online users, protocolVersion, etc.)
+     */
+    suspend fun getInfo(): CosmicChatInfo {
+        return runBlocking {
+            val url = "$apiBaseUrl/cosmic-chat/info"
+            val request: Request = url.httpGet()
+            return@runBlocking Utilities.jsonDeserialize(request.awaitString(), CosmicChatInfo::class.java)
         }
     }
 }

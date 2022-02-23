@@ -1,7 +1,12 @@
 package com.rpmtw.rpmtw_api_client.resources
 
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
+import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
+import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
+import com.rpmtw.rpmtw_api_client.mock.MockHttpClient
+import com.rpmtw.rpmtw_api_client.mock.MockHttpResponse
 import com.rpmtw.rpmtw_api_client.models.auth.CreateUserResult
+import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatMessage
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatUserType
 import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
@@ -9,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.Test
+import java.sql.Timestamp
 import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.assertContains
@@ -123,8 +129,7 @@ internal class CosmicChatResourceTest {
             resource.onMessageSent {
                 messages.add(it)
             }
-            @Suppress("SpellCheckingInspection")
-            resource.sendMessage(message = message, nickname = "Tonita")
+            resource.sendMessage(message = message)
             withContext(Dispatchers.IO) {
                 Thread.sleep(1000)
             }
@@ -181,5 +186,70 @@ internal class CosmicChatResourceTest {
             }
         })
         assertContains(exception.message!!, "Not connected")
+    }
+
+    @Test
+    fun getMessage() {
+        val uuid = "d63f30e9-77c4-4191-9ee1-e72257c9e804"
+        val client = RPMTWApiClient.instance
+
+        val mockMessage = CosmicChatMessage(
+            uuid = uuid,
+            username = "Maleah Lasky",
+            message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            nickname = "Meyer",
+            avatarUrl = "https://deadlyjptynabmauzn.id",
+            sentAt = Timestamp(System.currentTimeMillis()),
+            userType = CosmicChatUserType.minecraft,
+            replyMessageUUID = "94249836-e9e5-4c6f-9436-6655a0e111d8"
+        )
+        MockHttpClient.mockRequest(MockHttpResponse(data = mockMessage))
+
+        runBlocking {
+            val message: CosmicChatMessage = client.cosmicChatResource.getMessage(uuid)
+            assertEquals(message, mockMessage)
+        }
+    }
+
+    @Test
+    fun getMessageNotFound() {
+        MockHttpClient.mockRequest(MockHttpResponse(statusCode = 404, data = null))
+
+        val exception: ModelNotFoundException = assertFailsWith(block = {
+            val client = RPMTWApiClient.instance
+            runBlocking {
+                client.cosmicChatResource.getMessage("4b45b0e9-5d72-4baf-9652-b7d09248aa99")
+            }
+        })
+        assertContains(exception.message, "CosmicChatMessage not found")
+    }
+
+    @Test
+    fun getMessageUnknownException() {
+        MockHttpClient.mockRequest(MockHttpResponse(statusCode = 400, data = null, responseMessage = "Bad Request"))
+
+        val exception: FailedGetDataException = assertFailsWith(block = {
+            val client = RPMTWApiClient.instance
+            runBlocking {
+                client.cosmicChatResource.getMessage("9069bf32-201f-4530-8270-6fea1094ca7d")
+            }
+        })
+        assertContains(exception.message, "Failed")
+    }
+
+    @Test
+    fun getInfo() {
+        val client = RPMTWApiClient.instance
+
+        val mockInfo = CosmicChatInfo(
+            onlineUsers = 100,
+            protocolVersion = 1
+        )
+        MockHttpClient.mockRequest(MockHttpResponse(data = mockInfo))
+
+        runBlocking {
+            val info: CosmicChatInfo = client.cosmicChatResource.getInfo()
+            assertEquals(info, mockInfo)
+        }
     }
 }
