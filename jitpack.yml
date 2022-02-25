@@ -1,0 +1,5 @@
+install:
+  - echo "Running a install without test task"
+  - ./gradlew clean
+  - ./gradlew build -x test
+  - ./gradlew publishToMavenLocal
