@@ -84,6 +84,15 @@ internal class RPMTWApiClientTest {
     }
 
     @Test
+    fun getInstanceWithToken() {
+        @Suppress("SpellCheckingInspection")
+        val token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlcmVuY2UgTWVuZGVsIiwiaWF0IjoxNTE2MjM5MDIyfQ.KLB9CRh2C43pD6Fz37EswpYtR0SO8HSuxpseOR2UxGw"
+        val client = RPMTWApiClient(token = token)
+        assertEquals(client, RPMTWApiClient.instance)
+    }
+
+    @Test
     fun getInstanceUninitialized() {
         val exception: ClientUninitializedException = assertFailsWith(block = {
             @Suppress("UNUSED_VARIABLE")
