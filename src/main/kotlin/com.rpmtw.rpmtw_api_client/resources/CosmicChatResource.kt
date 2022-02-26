@@ -4,10 +4,7 @@ import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.coroutines.awaitString
 import com.github.kittinunf.fuel.coroutines.awaitStringResult
 import com.github.kittinunf.fuel.httpGet
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
-import com.google.gson.TypeAdapter
+import com.google.gson.*
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
@@ -15,6 +12,7 @@ import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatMessage
 import com.rpmtw.rpmtw_api_client.utilities.Utilities
+import io.socket.client.Ack
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.engineio.client.Transport
@@ -109,39 +107,58 @@ class CosmicChatResource(
     }
 
     /**
-     * Send a message to the Cosmic Chat server
+     * Send a message to the server, and return sent status.
      * @param message message content
      * @param nickname user's nickname
+     * @return sent status
      */
-    fun sendMessage(message: String, nickname: String? = null) {
-        connectCheck()
-
-        val json = JsonObject()
-        json.addProperty("message", message)
-        if (nickname != null) {
-            json.addProperty("nickname", nickname)
-        }
-
-        socketCache!!.emit("clientMessage", Gson().toJson(json).toByteArray(Charsets.UTF_8))
+    suspend fun sendMessage(
+        message: String,
+        nickname: String? = null
+    ): String {
+        return handleMessage(message = message, nickname = nickname)
     }
 
+
     /**
-     * Reply message by message id
+     * Reply message by message uuid, and return the replied status.
      * @param message message content
      * @param uuid message uuid to reply to
      * @param nickname user's nickname
+     * @return replied status
      */
-    fun replyMessage(message: String, uuid: String, nickname: String? = null) {
+    suspend fun replyMessage(message: String, uuid: String, nickname: String? = null): String {
+        return handleMessage(message = message, nickname = nickname, replyMessageUUID = uuid)
+    }
+
+    private suspend fun handleMessage(
+        message: String,
+        nickname: String? = null,
+        replyMessageUUID: String? = null
+    ): String {
         connectCheck()
+        var status: String? = null
 
         val json = JsonObject()
         json.addProperty("message", message)
-        json.addProperty("replyMessageUUID", uuid)
         if (nickname != null) {
             json.addProperty("nickname", nickname)
         }
+        if (replyMessageUUID != null) {
+            json.addProperty("replyMessageUUID", replyMessageUUID)
+        }
 
-        socketCache!!.emit("clientMessage", Gson().toJson(json).toByteArray(Charsets.UTF_8))
+        socketCache!!.emit("clientMessage", Gson().toJson(json).toByteArray(Charsets.UTF_8), Ack {
+            val response: JsonObject = JsonParser.parseString(it[0] as String).asJsonObject
+            status = response.get("status").asString
+        })
+
+        while (status == null) {
+            withContext(Dispatchers.IO) {
+                Thread.sleep(100)
+            }
+        }
+        return status!!
     }
 
     /**

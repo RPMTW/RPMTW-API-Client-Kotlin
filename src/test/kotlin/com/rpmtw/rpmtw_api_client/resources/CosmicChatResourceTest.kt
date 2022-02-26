@@ -88,7 +88,7 @@ internal class CosmicChatResourceTest {
             resource.onMessageSent {
                 messages.add(it)
             }
-            resource.sendMessage(message = message, nickname = nickname)
+            val status: String = resource.sendMessage(message = message, nickname = nickname)
             withContext(Dispatchers.IO) {
                 Thread.sleep(1000)
             }
@@ -101,6 +101,7 @@ internal class CosmicChatResourceTest {
             assertEquals(messages.first().userType, CosmicChatUserType.minecraft)
             assertEquals(messages.first().replyMessageUUID, null)
             assertEquals(messages.size, 1)
+            assertEquals(status, "success")
 
             resource.disconnect()
             assertEquals(resource.isConnected, false)
@@ -129,18 +130,21 @@ internal class CosmicChatResourceTest {
             resource.onMessageSent {
                 messages.add(it)
             }
-            resource.sendMessage(message = message)
+            val status1: String = resource.sendMessage(message = message)
             withContext(Dispatchers.IO) {
                 Thread.sleep(1000)
             }
+            assertEquals(status1, "success")
             val messageUUID: String = messages.first().uuid
-            resource.replyMessage(message = "Reply $message", nickname = "Declan", uuid = messageUUID)
+            val status2: String =
+                resource.replyMessage(message = "Reply $message", nickname = "Declan", uuid = messageUUID)
             withContext(Dispatchers.IO) {
                 Thread.sleep(1000)
             }
             assertEquals(messages.isNotEmpty(), true)
             assertEquals(messages.first().message, message)
             assertEquals(messages.size, 2)
+            assertEquals(status2, "success")
 
             resource.disconnect()
             assertEquals(resource.isConnected, false)
@@ -160,10 +164,11 @@ internal class CosmicChatResourceTest {
                     messages.add(it)
                 }
                 @Suppress("SpellCheckingInspection")
-                resource.sendMessage(message = message, nickname = "Brooklyn")
+                val status: String = resource.sendMessage(message = message, nickname = "Brooklyn")
                 withContext(Dispatchers.IO) {
                     Thread.sleep(1000)
                 }
+                assertEquals(status, "success")
                 resource.disconnect()
                 val messageUUID: String = messages.first().uuid
                 resource.replyMessage(
