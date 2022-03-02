@@ -6,8 +6,7 @@ import com.google.gson.JsonParser
 
 object Utilities {
     @JvmStatic
-    fun <T> jsonDeserialize(json: String, className: Class<T>): T {
-        val gson = Gson()
+    fun <T> jsonDeserialize(json: String, className: Class<T>, gson: Gson = Gson()): T {
         val jsonObject: JsonObject = JsonParser.parseString(json).asJsonObject
         jsonObject["data"].let {
             return gson.fromJson(it, className)

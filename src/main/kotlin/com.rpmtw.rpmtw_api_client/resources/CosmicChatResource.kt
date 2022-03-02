@@ -32,8 +32,7 @@ class CosmicChatResource(
     override val apiBaseUrl: String,
     private val cosmicChatBaseUrl: String,
     override val globalToken: String?,
-) :
-    BaseResource {
+) : BaseResource {
 
     val isConnected: Boolean
         get() = socketCache?.connected() ?: false
@@ -60,8 +59,7 @@ class CosmicChatResource(
             socket.io().on(Manager.EVENT_TRANSPORT) { args ->
                 val transport: Transport = args[0] as Transport
                 transport.on(Transport.EVENT_REQUEST_HEADERS) { headerArgs ->
-                    @Suppress("UNCHECKED_CAST")
-                    val headers = headerArgs[0] as MutableMap<String, List<String>>
+                    @Suppress("UNCHECKED_CAST") val headers = headerArgs[0] as MutableMap<String, List<String>>
                     if (minecraftUUID != null) {
                         headers["minecraft_uuid"] = mutableListOf(minecraftUUID)
                     }
@@ -113,8 +111,7 @@ class CosmicChatResource(
      * @return sent status
      */
     suspend fun sendMessage(
-        message: String,
-        nickname: String? = null
+        message: String, nickname: String? = null
     ): String {
         return handleMessage(message = message, nickname = nickname)
     }
@@ -132,9 +129,7 @@ class CosmicChatResource(
     }
 
     private suspend fun handleMessage(
-        message: String,
-        nickname: String? = null,
-        replyMessageUUID: String? = null
+        message: String, nickname: String? = null, replyMessageUUID: String? = null
     ): String {
         connectCheck()
         var status: String? = null
@@ -173,9 +168,7 @@ class CosmicChatResource(
             val jsonBytes: ByteArray =
                 intList.foldIndexed(ByteArray(intList.size)) { i, a, v -> a.apply { set(i, v.toByte()) } }
             val json = String(jsonBytes, Charsets.UTF_8)
-            val gson: Gson = GsonBuilder()
-                .registerTypeAdapter(Timestamp::class.java, TimestampAdapter())
-                .create()
+            val gson: Gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
             val message: CosmicChatMessage = gson.fromJson(json, CosmicChatMessage::class.java)
             handler(message)
         }
@@ -191,14 +184,19 @@ class CosmicChatResource(
             val url = "$apiBaseUrl/cosmic-chat/view/$uuid"
             val request: Request = url.httpGet()
 
-            request.awaitStringResult()
-                .fold({ return@fold Utilities.jsonDeserialize(it, CosmicChatMessage::class.java) }, {
-                    if (it.response.statusCode == 404) {
-                        throw ModelNotFoundException(CosmicChatMessage::class)
-                    }
+            request.awaitStringResult().fold({
+                return@fold Utilities.jsonDeserialize(
+                    it,
+                    CosmicChatMessage::class.java,
+                    gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
+                )
+            }, {
+                if (it.response.statusCode == 404) {
+                    throw ModelNotFoundException(CosmicChatMessage::class)
+                }
 
-                    throw FailedGetDataException(it)
-                })
+                throw FailedGetDataException(it)
+            })
         }
     }
 
