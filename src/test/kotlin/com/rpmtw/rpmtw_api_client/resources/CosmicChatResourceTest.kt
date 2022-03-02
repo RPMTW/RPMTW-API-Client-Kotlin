@@ -1,5 +1,6 @@
 package com.rpmtw.rpmtw_api_client.resources
 
+import com.google.gson.GsonBuilder
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
 import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
@@ -9,6 +10,7 @@ import com.rpmtw.rpmtw_api_client.models.auth.CreateUserResult
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatMessage
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatUserType
+import com.rpmtw.rpmtw_api_client.models.gson.adapters.TimestampAdapter
 import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -207,7 +209,10 @@ internal class CosmicChatResourceTest {
             userType = CosmicChatUserType.minecraft,
             replyMessageUUID = "94249836-e9e5-4c6f-9436-6655a0e111d8"
         )
-        MockHttpClient.mockRequest(MockHttpResponse(data = mockMessage))
+        MockHttpClient.mockRequest(
+            MockHttpResponse(data = mockMessage),
+            gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
+        )
 
         runBlocking {
             val message: CosmicChatMessage = client.cosmicChatResource.getMessage(uuid)

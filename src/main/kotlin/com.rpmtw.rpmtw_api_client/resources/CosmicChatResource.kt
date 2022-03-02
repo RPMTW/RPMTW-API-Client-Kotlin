@@ -11,6 +11,7 @@ import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatMessage
+import com.rpmtw.rpmtw_api_client.models.gson.adapters.TimestampAdapter
 import com.rpmtw.rpmtw_api_client.utilities.Utilities
 import io.socket.client.Ack
 import io.socket.client.IO
@@ -209,17 +210,5 @@ class CosmicChatResource(
             val request: Request = url.httpGet()
             return@runBlocking Utilities.jsonDeserialize(request.awaitString(), CosmicChatInfo::class.java)
         }
-    }
-}
-
-private class TimestampAdapter : TypeAdapter<Timestamp>() {
-    @Throws(IOException::class)
-    override fun read(`in`: JsonReader): Timestamp {
-        return Timestamp(`in`.nextLong())
-    }
-
-    @Throws(IOException::class)
-    override fun write(out: JsonWriter, timestamp: Timestamp) {
-        out.value(timestamp.time)
     }
 }

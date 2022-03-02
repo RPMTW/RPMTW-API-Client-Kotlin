@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream
 
 class MockHttpClient {
     companion object {
-        fun mockRequest(response: MockHttpResponse) {
+        fun mockRequest(response: MockHttpResponse, gson: Gson = Gson()) {
             val httpClient = object : Client {
                 @Suppress("LiftReturnOrAssignment")
                 override fun executeRequest(request: Request): Response {
@@ -17,11 +17,11 @@ class MockHttpClient {
                     val data: Any? = response.data
                     if (data != null) {
                         if (data is JsonElement) {
-                            body = DefaultBody({ ByteArrayInputStream(Gson().toJson(data).toByteArray()) })
+                            body = DefaultBody({ ByteArrayInputStream(gson.toJson(data).toByteArray()) })
                         } else {
                             body = DefaultBody({
                                 ByteArrayInputStream(
-                                    "{\"data\":${Gson().toJson(response.data)}}".toByteArray()
+                                    "{\"data\":${gson.toJson(response.data)}}".toByteArray()
                                 )
                             })
                         }
