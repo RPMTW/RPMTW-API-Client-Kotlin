@@ -10,7 +10,7 @@ internal class UtilitiesTest {
             Utilities.markdownToMinecraftFormatting("**bold**, *italic*, _alternative italic_, ~~strikethrough~~, __underscore__, \\~\\~test backslash\\~\\~")
         assertEquals(
             formatted,
-            "§l§obold§r§o§r, §oitalic§r, §oalternative italic§r, §m~strikethrough§r~, §n§ounderscore§r§o§r, ~~test backslash~~"
+            "§lbold§r, §oitalic§r, §oalternative italic§r, §mstrikethrough§r, §n§ounderscore§r§o§r, ~~test backslash~~"
         )
     }
 }
