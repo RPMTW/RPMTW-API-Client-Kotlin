@@ -44,17 +44,17 @@ object Utilities {
                         }
                         bold = !bold
                         i += 1
-                        continue
-                    }
-                    if (italic) {
-                        result.append(resetCode)
-                        result.append(if (bold) boldCode else "")
-                        result.append(if (strikethrough) strikethroughCode else "")
-                        result.append(if (underline) underlineCode else "")
                     } else {
-                        result.append(italicCode)
+                        if (italic) {
+                            result.append(resetCode)
+                            result.append(if (bold) boldCode else "")
+                            result.append(if (strikethrough) strikethroughCode else "")
+                            result.append(if (underline) underlineCode else "")
+                        } else {
+                            result.append(italicCode)
+                        }
+                        italic = !italic
                     }
-                    italic = !italic
                 }
                 '~' -> {
                     if (nextChar == '~') {
@@ -68,9 +68,9 @@ object Utilities {
                         }
                         strikethrough = !strikethrough
                         i += 1
-                        continue
+                    } else {
+                        result.append("~")
                     }
-                    result.append("~")
                 }
                 '_' -> {
                     if (nextChar == '_') {
