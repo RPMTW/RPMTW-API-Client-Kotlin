@@ -87,9 +87,9 @@ internal class CosmicChatResourceTest {
         runBlocking {
             resource.connect(minecraftUUID = minecraftUUID)
             assertEquals(resource.isConnected, true)
-            resource.onMessageSent {
+            resource.onMessageSent({
                 messages.add(it)
-            }
+            })
             val status: String = resource.sendMessage(message = message, nickname = nickname)
             withContext(Dispatchers.IO) {
                 Thread.sleep(1000)
@@ -129,9 +129,9 @@ internal class CosmicChatResourceTest {
         runBlocking {
             resource.connect(minecraftUUID = minecraftUUID)
             assertEquals(resource.isConnected, true)
-            resource.onMessageSent {
+            resource.onMessageSent({
                 messages.add(it)
-            }
+            })
             val status1: String = resource.sendMessage(message = message)
             withContext(Dispatchers.IO) {
                 Thread.sleep(1000)
@@ -162,9 +162,9 @@ internal class CosmicChatResourceTest {
             runBlocking {
                 resource.connect(minecraftUUID = minecraftUUID)
                 assertEquals(resource.isConnected, true)
-                resource.onMessageSent {
+                resource.onMessageSent({
                     messages.add(it)
-                }
+                })
                 @Suppress("SpellCheckingInspection")
                 val status: String = resource.sendMessage(message = message, nickname = "Brooklyn")
                 withContext(Dispatchers.IO) {
@@ -189,7 +189,7 @@ internal class CosmicChatResourceTest {
         val client = RPMTWApiClient.init(development = true)
         val exception: IllegalStateException = assertFailsWith(block = {
             runBlocking {
-                client.cosmicChatResource.onMessageSent {}
+                client.cosmicChatResource.onMessageSent({})
             }
         })
         assertContains(exception.message!!, "Not connected")
