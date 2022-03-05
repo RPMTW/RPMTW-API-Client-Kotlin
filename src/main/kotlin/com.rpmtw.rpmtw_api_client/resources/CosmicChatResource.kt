@@ -4,9 +4,10 @@ import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.coroutines.awaitString
 import com.github.kittinunf.fuel.coroutines.awaitStringResult
 import com.github.kittinunf.fuel.httpGet
-import com.google.gson.*
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
@@ -22,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
-import java.io.IOException
 import java.sql.Timestamp
 import io.socket.client.Socket as SocketIO
 
@@ -160,7 +160,10 @@ class CosmicChatResource(
     /**
      * Receive messages sent by other users
      */
-    fun onMessageSent(handler: (message: CosmicChatMessage) -> Unit) {
+    fun onMessageSent(
+        handler: (message: CosmicChatMessage) -> Unit,
+        format: CosmicChatMessageFormat = CosmicChatMessageFormat.Markdown
+    ) {
         connectCheck()
 
         socketCache!!.on("sentMessage") { args ->
@@ -171,7 +174,7 @@ class CosmicChatResource(
             val json = String(jsonBytes, Charsets.UTF_8)
             val gson: Gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
             val message: CosmicChatMessage = gson.fromJson(json, CosmicChatMessage::class.java)
-            handler(message)
+            handler(formatMessages(format, message))
         }
     }
 
@@ -180,16 +183,21 @@ class CosmicChatResource(
      * @param uuid message uuid
      */
     @Throws(FailedGetDataException::class)
-    suspend fun getMessage(uuid: String): CosmicChatMessage {
+    suspend fun getMessage(
+        uuid: String,
+        format: CosmicChatMessageFormat = CosmicChatMessageFormat.Markdown
+    ): CosmicChatMessage {
         return runBlocking {
             val url = "$apiBaseUrl/cosmic-chat/view/$uuid"
             val request: Request = url.httpGet()
 
             request.awaitStringResult().fold({
-                return@fold Utilities.jsonDeserialize(
-                    it,
-                    CosmicChatMessage::class.java,
-                    gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
+                return@fold formatMessages(
+                    format, Utilities.jsonDeserialize(
+                        it,
+                        CosmicChatMessage::class.java,
+                        gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
+                    )
                 )
             }, {
                 if (it.response.statusCode == 404) {
@@ -211,4 +219,18 @@ class CosmicChatResource(
             return@runBlocking Utilities.jsonDeserialize(request.awaitString(), CosmicChatInfo::class.java)
         }
     }
+
+    private fun formatMessages(format: CosmicChatMessageFormat, message: CosmicChatMessage): CosmicChatMessage {
+        val source = message.message
+        val formatted: String = when (format) {
+            CosmicChatMessageFormat.MinecraftFormatting -> Utilities.markdownToMinecraftFormatting(source)
+            CosmicChatMessageFormat.Markdown -> source
+        }
+        return message.copy(message = formatted)
+    }
+}
+
+enum class CosmicChatMessageFormat {
+    Markdown,
+    MinecraftFormatting
 }
