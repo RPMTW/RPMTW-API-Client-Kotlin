@@ -196,6 +196,40 @@ internal class CosmicChatResourceTest {
     }
 
     @Test
+    fun onMessageSentWithMinecraftFormatting() {
+        val client = RPMTWApiClient.init(development = true)
+        val resource: CosmicChatResource = client.cosmicChatResource
+        val messages: ArrayList<CosmicChatMessage> = arrayListOf()
+
+        val nickname = "Ashleen"
+        runBlocking {
+            resource.connect(minecraftUUID = minecraftUUID)
+            assertEquals(resource.isConnected, true)
+            resource.onMessageSent({
+                messages.add(it)
+            }, CosmicChatMessageFormat.MinecraftFormatting)
+            val status: String = resource.sendMessage(message = "**Bold**", nickname = nickname)
+            withContext(Dispatchers.IO) {
+                Thread.sleep(1000)
+            }
+            assertEquals(messages.isNotEmpty(), true)
+            assertEquals(messages.first().message, "§lBold")
+            assertEquals(messages.first().nickname, nickname)
+            assertEquals(messages.first().username, minecraftUsername)
+            assertContains(messages.first().avatarUrl, minecraftUUID)
+            assertEquals(messages.first().sentAt.before(Date(System.currentTimeMillis())), true)
+            assertEquals(messages.first().userType, CosmicChatUserType.minecraft)
+            assertEquals(messages.first().replyMessageUUID, null)
+            assertEquals(messages.size, 1)
+            assertEquals(status, "success")
+
+            resource.disconnect()
+            assertEquals(resource.isConnected, false)
+        }
+    }
+
+
+    @Test
     fun getMessage() {
         val uuid = "d63f30e9-77c4-4191-9ee1-e72257c9e804"
         val client = RPMTWApiClient.instance

@@ -86,6 +86,7 @@ object Utilities {
                         i += 1
                         continue
                     } else {
+                        // TODO: Fix __abc___ should be §nabc§r_ not §nabc§o§r_
                         if (italic) {
                             result.append(resetCode)
                             result.append(if (bold) boldCode else "")
