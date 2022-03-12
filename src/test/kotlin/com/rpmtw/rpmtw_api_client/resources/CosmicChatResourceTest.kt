@@ -213,7 +213,7 @@ internal class CosmicChatResourceTest {
                 Thread.sleep(1000)
             }
             assertEquals(messages.isNotEmpty(), true)
-            assertEquals(messages.first().message, "§lBold")
+            assertEquals(messages.first().message, "§lBold§r")
             assertEquals(messages.first().nickname, nickname)
             assertEquals(messages.first().username, minecraftUsername)
             assertContains(messages.first().avatarUrl, minecraftUUID)
