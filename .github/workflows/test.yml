@@ -24,6 +24,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: "RPMTW/RPMTW-Server"
+          branch: "develop"
           path: ${{ github.workspace }}/server
 
       - name: Cache Dart

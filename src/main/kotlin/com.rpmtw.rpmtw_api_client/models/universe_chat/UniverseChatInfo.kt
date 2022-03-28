@@ -1,6 +1,6 @@
-package com.rpmtw.rpmtw_api_client.models.cosmic_chat
+package com.rpmtw.rpmtw_api_client.models.universe_chat
 
-data class CosmicChatInfo(
+data class UniverseChatInfo(
     /**
      * Number of online users.
      */

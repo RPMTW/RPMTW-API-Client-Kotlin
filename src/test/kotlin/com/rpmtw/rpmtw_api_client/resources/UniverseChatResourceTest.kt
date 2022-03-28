@@ -7,9 +7,9 @@ import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.mock.MockHttpClient
 import com.rpmtw.rpmtw_api_client.mock.MockHttpResponse
 import com.rpmtw.rpmtw_api_client.models.auth.CreateUserResult
-import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
-import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatMessage
-import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatUserType
+import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatInfo
+import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatMessage
+import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatUserType
 import com.rpmtw.rpmtw_api_client.models.gson.adapters.TimestampAdapter
 import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 @Suppress("SpellCheckingInspection")
-internal class CosmicChatResourceTest {
+internal class UniverseChatResourceTest {
     private val minecraftUUID = "977e69fb-0b15-40bf-b25e-4718485bf72f"
     private val minecraftUsername = "SiongSng"
     private val message = "Hello World!"
@@ -38,10 +38,10 @@ internal class CosmicChatResourceTest {
     fun connectWithMinecraftAccount() {
         val client = RPMTWApiClient.init(development = true)
         runBlocking {
-            val resource: CosmicChatResource = client.cosmicChatResource
+            val resource: UniverseChatResource = client.universeChatResource
             resource.connect(minecraftUUID = minecraftUUID)
             assertEquals(resource.isConnected, true)
-            client.cosmicChatResource.disconnect()
+            client.universeChatResource.disconnect()
             assertEquals(resource.isConnected, false)
         }
     }
@@ -56,10 +56,10 @@ internal class CosmicChatResourceTest {
                 email = "sadae_hirschman8cj@gmail.com"
             )
             val token: String = user.token
-            val resource: CosmicChatResource = client.cosmicChatResource
+            val resource: UniverseChatResource = client.universeChatResource
             resource.connect(token = token)
             assertEquals(resource.isConnected, true)
-            client.cosmicChatResource.disconnect()
+            client.universeChatResource.disconnect()
             assertEquals(resource.isConnected, false)
         }
     }
@@ -69,7 +69,7 @@ internal class CosmicChatResourceTest {
         val client = RPMTWApiClient.init(development = true)
         val exception: IllegalArgumentException = assertFailsWith(block = {
             runBlocking {
-                val resource: CosmicChatResource = client.cosmicChatResource
+                val resource: UniverseChatResource = client.universeChatResource
                 resource.connect()
                 assertEquals(resource.isConnected, false)
             }
@@ -80,8 +80,8 @@ internal class CosmicChatResourceTest {
     @Test
     fun sendMessage() {
         val client = RPMTWApiClient.init(development = true)
-        val resource: CosmicChatResource = client.cosmicChatResource
-        val messages: ArrayList<CosmicChatMessage> = arrayListOf()
+        val resource: UniverseChatResource = client.universeChatResource
+        val messages: ArrayList<UniverseChatMessage> = arrayListOf()
 
         val nickname = "Sarahi"
         runBlocking {
@@ -100,7 +100,7 @@ internal class CosmicChatResourceTest {
             assertEquals(messages.first().username, minecraftUsername)
             assertContains(messages.first().avatarUrl, minecraftUUID)
             assertEquals(messages.first().sentAt.before(Date(System.currentTimeMillis())), true)
-            assertEquals(messages.first().userType, CosmicChatUserType.minecraft)
+            assertEquals(messages.first().userType, UniverseChatUserType.minecraft)
             assertEquals(messages.first().replyMessageUUID, null)
             assertEquals(messages.size, 1)
             assertEquals(status, "success")
@@ -115,7 +115,7 @@ internal class CosmicChatResourceTest {
         val client = RPMTWApiClient.init(development = true)
         val exception: IllegalStateException = assertFailsWith(block = {
             runBlocking {
-                client.cosmicChatResource.sendMessage(message = message)
+                client.universeChatResource.sendMessage(message = message)
             }
         })
         assertContains(exception.message!!, "Not connected")
@@ -124,8 +124,8 @@ internal class CosmicChatResourceTest {
     @Test
     fun replyMessage() {
         val client = RPMTWApiClient.init(development = true)
-        val resource: CosmicChatResource = client.cosmicChatResource
-        val messages: ArrayList<CosmicChatMessage> = arrayListOf()
+        val resource: UniverseChatResource = client.universeChatResource
+        val messages: ArrayList<UniverseChatMessage> = arrayListOf()
         runBlocking {
             resource.connect(minecraftUUID = minecraftUUID)
             assertEquals(resource.isConnected, true)
@@ -156,8 +156,8 @@ internal class CosmicChatResourceTest {
     @Test
     fun replyMessageNoConnect() {
         val client = RPMTWApiClient.init(development = true)
-        val resource: CosmicChatResource = client.cosmicChatResource
-        val messages: ArrayList<CosmicChatMessage> = arrayListOf()
+        val resource: UniverseChatResource = client.universeChatResource
+        val messages: ArrayList<UniverseChatMessage> = arrayListOf()
         val exception: IllegalStateException = assertFailsWith(block = {
             runBlocking {
                 resource.connect(minecraftUUID = minecraftUUID)
@@ -189,7 +189,7 @@ internal class CosmicChatResourceTest {
         val client = RPMTWApiClient.init(development = true)
         val exception: IllegalStateException = assertFailsWith(block = {
             runBlocking {
-                client.cosmicChatResource.onMessageSent({})
+                client.universeChatResource.onMessageSent({})
             }
         })
         assertContains(exception.message!!, "Not connected")
@@ -198,8 +198,8 @@ internal class CosmicChatResourceTest {
     @Test
     fun onMessageSentWithMinecraftFormatting() {
         val client = RPMTWApiClient.init(development = true)
-        val resource: CosmicChatResource = client.cosmicChatResource
-        val messages: ArrayList<CosmicChatMessage> = arrayListOf()
+        val resource: UniverseChatResource = client.universeChatResource
+        val messages: ArrayList<UniverseChatMessage> = arrayListOf()
 
         val nickname = "Ashleen"
         runBlocking {
@@ -207,7 +207,7 @@ internal class CosmicChatResourceTest {
             assertEquals(resource.isConnected, true)
             resource.onMessageSent({
                 messages.add(it)
-            }, CosmicChatMessageFormat.MinecraftFormatting)
+            }, UniverseChatMessageFormat.MinecraftFormatting)
             val status: String = resource.sendMessage(message = "**Bold**", nickname = nickname)
             withContext(Dispatchers.IO) {
                 Thread.sleep(1000)
@@ -218,7 +218,7 @@ internal class CosmicChatResourceTest {
             assertEquals(messages.first().username, minecraftUsername)
             assertContains(messages.first().avatarUrl, minecraftUUID)
             assertEquals(messages.first().sentAt.before(Date(System.currentTimeMillis())), true)
-            assertEquals(messages.first().userType, CosmicChatUserType.minecraft)
+            assertEquals(messages.first().userType, UniverseChatUserType.minecraft)
             assertEquals(messages.first().replyMessageUUID, null)
             assertEquals(messages.size, 1)
             assertEquals(status, "success")
@@ -233,14 +233,14 @@ internal class CosmicChatResourceTest {
     fun getMessage() {
         val uuid = "d63f30e9-77c4-4191-9ee1-e72257c9e804"
         val client = RPMTWApiClient.instance
-        val mockMessage = CosmicChatMessage(
+        val mockMessage = UniverseChatMessage(
             uuid = uuid,
             username = "Maleah Lasky",
             message = "Hello, world!",
             nickname = "Meyer",
             avatarUrl = "https://deadlyjptynabmauzn.id",
             sentAt = Timestamp(1645628537000),
-            userType = CosmicChatUserType.minecraft,
+            userType = UniverseChatUserType.minecraft,
             replyMessageUUID = "94249836-e9e5-4c6f-9436-6655a0e111d8"
         )
         MockHttpClient.mockRequest(
@@ -249,7 +249,7 @@ internal class CosmicChatResourceTest {
         )
 
         runBlocking {
-            val message: CosmicChatMessage = client.cosmicChatResource.getMessage(uuid)
+            val message: UniverseChatMessage = client.universeChatResource.getMessage(uuid)
             assertEquals(message, mockMessage)
         }
     }
@@ -261,10 +261,10 @@ internal class CosmicChatResourceTest {
         val exception: ModelNotFoundException = assertFailsWith(block = {
             val client = RPMTWApiClient.instance
             runBlocking {
-                client.cosmicChatResource.getMessage("4b45b0e9-5d72-4baf-9652-b7d09248aa99")
+                client.universeChatResource.getMessage("4b45b0e9-5d72-4baf-9652-b7d09248aa99")
             }
         })
-        assertContains(exception.message, "CosmicChatMessage not found")
+        assertContains(exception.message, "UniverseChatMessage not found")
     }
 
     @Test
@@ -274,7 +274,7 @@ internal class CosmicChatResourceTest {
         val exception: FailedGetDataException = assertFailsWith(block = {
             val client = RPMTWApiClient.instance
             runBlocking {
-                client.cosmicChatResource.getMessage("9069bf32-201f-4530-8270-6fea1094ca7d")
+                client.universeChatResource.getMessage("9069bf32-201f-4530-8270-6fea1094ca7d")
             }
         })
         assertContains(exception.message, "Failed")
@@ -284,14 +284,14 @@ internal class CosmicChatResourceTest {
     fun getInfo() {
         val client = RPMTWApiClient.instance
 
-        val mockInfo = CosmicChatInfo(
+        val mockInfo = UniverseChatInfo(
             onlineUsers = 100,
             protocolVersion = 1
         )
         MockHttpClient.mockRequest(MockHttpResponse(data = mockInfo))
 
         runBlocking {
-            val info: CosmicChatInfo = client.cosmicChatResource.getInfo()
+            val info: UniverseChatInfo = client.universeChatResource.getInfo()
             assertEquals(info, mockInfo)
         }
     }

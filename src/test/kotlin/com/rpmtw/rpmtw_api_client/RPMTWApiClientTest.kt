@@ -33,21 +33,21 @@ internal class RPMTWApiClientTest {
     }
 
     @Test
-    fun getCosmicChatBaseUrl() {
+    fun getUniverseChatBaseUrl() {
         val client = RPMTWApiClient()
-        assertEquals(client.cosmicChatBaseUrl, "https://api.rpmtw.com:2087")
+        assertEquals(client.universeChatBaseUrl, "https://api.rpmtw.com:2087")
     }
 
     @Test
-    fun getCosmicChatBaseUrlWithDevelopment() {
+    fun getUniverseChatBaseUrlWithDevelopment() {
         val client = RPMTWApiClient(development = true)
-        assertEquals(client.cosmicChatBaseUrl, "http://localhost:2087")
+        assertEquals(client.universeChatBaseUrl, "http://localhost:2087")
     }
 
     @Test
-    fun getCosmicChatBaseUrlCustom() {
-        val client = RPMTWApiClient(cosmicChatBaseUrl = "http://localhost:2345")
-        assertEquals(client.cosmicChatBaseUrl, "http://localhost:2345")
+    fun getUniverseChatBaseUrlCustom() {
+        val client = RPMTWApiClient(universeChatBaseUrl = "http://localhost:2345")
+        assertEquals(client.universeChatBaseUrl, "http://localhost:2345")
     }
 
 

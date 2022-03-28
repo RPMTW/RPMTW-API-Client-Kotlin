@@ -10,8 +10,8 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
-import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatInfo
-import com.rpmtw.rpmtw_api_client.models.cosmic_chat.CosmicChatMessage
+import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatInfo
+import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatMessage
 import com.rpmtw.rpmtw_api_client.models.gson.adapters.TimestampAdapter
 import com.rpmtw.rpmtw_api_client.utilities.Utilities
 import io.socket.client.Ack
@@ -29,9 +29,9 @@ import io.socket.client.Socket as SocketIO
 
 private var socketCache: SocketIO? = null
 
-class CosmicChatResource(
+class UniverseChatResource(
     override val apiBaseUrl: String,
-    private val cosmicChatBaseUrl: String,
+    private val universeChatBaseUrl: String,
     override val globalToken: String?,
 ) : BaseResource {
 
@@ -39,7 +39,7 @@ class CosmicChatResource(
         get() = socketCache?.connected() ?: false
 
     /**
-     * Connect to the Cosmic Chat server
+     * Connect to the Universe Chat server
      * @param minecraftUUID player's minecraft UUID (optional)
      * @param token rpmtw account token (optional)
      * [minecraftUUID], [token] cannot both be empty
@@ -53,9 +53,9 @@ class CosmicChatResource(
             }
 
             baseOption.transports = arrayOf(WebSocket.NAME)
-            var socket: SocketIO = IO.socket(cosmicChatBaseUrl, baseOption)
+            var socket: SocketIO = IO.socket(universeChatBaseUrl, baseOption)
 
-            println("Connecting to Cosmic Chat server...")
+            println("Connecting to Universe Chat server...")
             var connected = false
             socket.io().on(Manager.EVENT_TRANSPORT) { args ->
                 val transport: Transport = args[0] as Transport
@@ -70,7 +70,7 @@ class CosmicChatResource(
                 }
             }
             socket.on(SocketIO.EVENT_CONNECT) {
-                println("Connected to Cosmic Chat server")
+                println("Connected to Universe Chat server")
                 connected = true
             }
             socket = socket.connect()
@@ -91,7 +91,7 @@ class CosmicChatResource(
     }
 
     /**
-     * Disconnect from the Cosmic Chat server
+     * Disconnect from the Universe Chat server
      */
     fun disconnect() {
         socketCache?.disconnect()
@@ -101,7 +101,7 @@ class CosmicChatResource(
 
     private fun connectCheck() {
         if (socketCache == null) {
-            throw IllegalStateException("Not connected to the Cosmic Chat server, call connect() first")
+            throw IllegalStateException("Not connected to the Universe Chat server, call connect() first")
         }
     }
 
@@ -161,8 +161,8 @@ class CosmicChatResource(
      * Receive messages sent by other users
      */
     fun onMessageSent(
-        handler: (message: CosmicChatMessage) -> Unit,
-        format: CosmicChatMessageFormat = CosmicChatMessageFormat.Markdown
+        handler: (message: UniverseChatMessage) -> Unit,
+        format: UniverseChatMessageFormat = UniverseChatMessageFormat.Markdown
     ) {
         connectCheck()
 
@@ -173,7 +173,7 @@ class CosmicChatResource(
                 intList.foldIndexed(ByteArray(intList.size)) { i, a, v -> a.apply { set(i, v.toByte()) } }
             val json = String(jsonBytes, Charsets.UTF_8)
             val gson: Gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
-            val message: CosmicChatMessage = gson.fromJson(json, CosmicChatMessage::class.java)
+            val message: UniverseChatMessage = gson.fromJson(json, UniverseChatMessage::class.java)
             handler(formatMessages(format, message))
         }
     }
@@ -185,23 +185,23 @@ class CosmicChatResource(
     @Throws(FailedGetDataException::class)
     suspend fun getMessage(
         uuid: String,
-        format: CosmicChatMessageFormat = CosmicChatMessageFormat.Markdown
-    ): CosmicChatMessage {
+        format: UniverseChatMessageFormat = UniverseChatMessageFormat.Markdown
+    ): UniverseChatMessage {
         return runBlocking {
-            val url = "$apiBaseUrl/cosmic-chat/view/$uuid"
+            val url = "$apiBaseUrl/universe-chat/view/$uuid"
             val request: Request = url.httpGet()
 
             request.awaitStringResult().fold({
                 return@fold formatMessages(
                     format, Utilities.jsonDeserialize(
                         it,
-                        CosmicChatMessage::class.java,
+                        UniverseChatMessage::class.java,
                         gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
                     )
                 )
             }, {
                 if (it.response.statusCode == 404) {
-                    throw ModelNotFoundException(CosmicChatMessage::class)
+                    throw ModelNotFoundException(UniverseChatMessage::class)
                 }
 
                 throw FailedGetDataException(it)
@@ -210,27 +210,27 @@ class CosmicChatResource(
     }
 
     /**
-     * Get cosmic chat info (online users, protocolVersion, etc.)
+     * Get universe chat info (online users, protocolVersion, etc.)
      */
-    suspend fun getInfo(): CosmicChatInfo {
+    suspend fun getInfo(): UniverseChatInfo {
         return runBlocking {
-            val url = "$apiBaseUrl/cosmic-chat/info"
+            val url = "$apiBaseUrl/universe-chat/info"
             val request: Request = url.httpGet()
-            return@runBlocking Utilities.jsonDeserialize(request.awaitString(), CosmicChatInfo::class.java)
+            return@runBlocking Utilities.jsonDeserialize(request.awaitString(), UniverseChatInfo::class.java)
         }
     }
 
-    private fun formatMessages(format: CosmicChatMessageFormat, message: CosmicChatMessage): CosmicChatMessage {
+    private fun formatMessages(format: UniverseChatMessageFormat, message: UniverseChatMessage): UniverseChatMessage {
         val source = message.message
         val formatted: String = when (format) {
-            CosmicChatMessageFormat.MinecraftFormatting -> Utilities.markdownToMinecraftFormatting(source)
-            CosmicChatMessageFormat.Markdown -> source
+            UniverseChatMessageFormat.MinecraftFormatting -> Utilities.markdownToMinecraftFormatting(source)
+            UniverseChatMessageFormat.Markdown -> source
         }
         return message.copy(message = formatted)
     }
 }
 
-enum class CosmicChatMessageFormat {
+enum class UniverseChatMessageFormat {
     Markdown,
     MinecraftFormatting
 }

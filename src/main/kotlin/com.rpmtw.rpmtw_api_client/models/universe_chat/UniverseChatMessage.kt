@@ -1,8 +1,8 @@
-package com.rpmtw.rpmtw_api_client.models.cosmic_chat
+package com.rpmtw.rpmtw_api_client.models.universe_chat
 
 import java.sql.Timestamp
 
-data class CosmicChatMessage(
+data class UniverseChatMessage(
     val uuid: String,
     val username: String,
     val message: String,
@@ -12,12 +12,12 @@ data class CosmicChatMessage(
      * message sent time (UTC+0)
      */
     val sentAt: Timestamp,
-    val userType: CosmicChatUserType,
+    val userType: UniverseChatUserType,
     val replyMessageUUID: String?
 )
 
 @Suppress("EnumEntryName")
-enum class CosmicChatUserType {
+enum class UniverseChatUserType {
     /**
      * RPMTW account
      */
