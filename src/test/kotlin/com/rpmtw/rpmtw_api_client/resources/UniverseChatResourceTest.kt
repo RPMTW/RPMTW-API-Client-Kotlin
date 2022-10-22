@@ -98,7 +98,7 @@ internal class UniverseChatResourceTest {
             assertEquals(messages.first().message, message)
             assertEquals(messages.first().nickname, nickname)
             assertEquals(messages.first().username, minecraftUsername)
-            assertContains(messages.first().avatarUrl, minecraftUUID)
+            messages.first().avatarUrl?.let { assertContains(it, minecraftUUID) }
             assertEquals(messages.first().sentAt.before(Date(System.currentTimeMillis())), true)
             assertEquals(messages.first().userType, UniverseChatUserType.minecraft)
             assertEquals(messages.first().replyMessageUUID, null)
@@ -165,7 +165,6 @@ internal class UniverseChatResourceTest {
                 resource.onMessageSent({
                     messages.add(it)
                 })
-                @Suppress("SpellCheckingInspection")
                 val status: String = resource.sendMessage(message = message, nickname = "Brooklyn")
                 withContext(Dispatchers.IO) {
                     Thread.sleep(1000)
@@ -216,7 +215,7 @@ internal class UniverseChatResourceTest {
             assertEquals(messages.first().message, "§lBold§r")
             assertEquals(messages.first().nickname, nickname)
             assertEquals(messages.first().username, minecraftUsername)
-            assertContains(messages.first().avatarUrl, minecraftUUID)
+            messages.first().avatarUrl?.let { assertContains(it, minecraftUUID) }
             assertEquals(messages.first().sentAt.before(Date(System.currentTimeMillis())), true)
             assertEquals(messages.first().userType, UniverseChatUserType.minecraft)
             assertEquals(messages.first().replyMessageUUID, null)

@@ -7,7 +7,7 @@ data class UniverseChatMessage(
     val username: String,
     val message: String,
     val nickname: String?,
-    val avatarUrl: String,
+    val avatarUrl: String?,
     /**
      * message sent time (UTC+0)
      */
