@@ -31,21 +31,21 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/dart-sdk
-          key: ${{ runner.os }}-dart-2.16.0-134.5.beta
+          key: ${{ runner.os }}-dart-2.18.3-134.5.beta
       # https://dart.dev/get-dart/archive
       - uses: dart-lang/setup-dart@v1.3
         with:
-          sdk: 2.16.1
+          sdk: 2.18.3
       - name: Install dependencies
         run: |
           cd ${{ github.workspace }}/server
           dart pub get
           dart pub global activate coverage
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-      - name: Start MongoDB 5.0
+      - name: Start MongoDB 6.0
         uses: supercharge/mongodb-github-action@1.7.0
         with:
-          mongodb-version: 5.0
+          mongodb-version: 6.0
       - name: Start RPMTW Server
         run: |
           cd ${{ github.workspace }}/server
@@ -85,21 +85,21 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/dart-sdk
-          key: ${{ runner.os }}-dart-2.16.0-134.5.beta
+          key: ${{ runner.os }}-dart-2.18.3-134.5.beta
       # https://dart.dev/get-dart/archive
       - uses: dart-lang/setup-dart@v1.3
         with:
-          sdk: 2.16.1
+          sdk: 2.18.3
       - name: Install dependencies
         run: |
           cd ${{ github.workspace }}/server
           dart pub get
           dart pub global activate coverage
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-      - name: Start MongoDB 5.0
+      - name: Start MongoDB 6.0
         uses: supercharge/mongodb-github-action@1.7.0
         with:
-          mongodb-version: 5.0
+          mongodb-version: 6.0
       - name: Start RPMTW Server
         run: |
           cd ${{ github.workspace }}/server
