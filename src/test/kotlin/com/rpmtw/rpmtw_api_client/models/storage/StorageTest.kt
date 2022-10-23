@@ -1,7 +1,7 @@
 package com.rpmtw.rpmtw_api_client.models.storage
 
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
-import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
+import com.rpmtw.rpmtw_api_client.util.TestUtilities
 import org.junit.jupiter.api.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals

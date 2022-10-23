@@ -1,10 +1,10 @@
-package com.rpmtw.rpmtw_api_client.utilities
+package com.rpmtw.rpmtw_api_client.util
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 
-object Utilities {
+object Util {
     @JvmStatic
     fun <T> jsonDeserialize(json: String, className: Class<T>, gson: Gson = Gson()): T {
         val jsonObject: JsonObject = JsonParser.parseString(json).asJsonObject

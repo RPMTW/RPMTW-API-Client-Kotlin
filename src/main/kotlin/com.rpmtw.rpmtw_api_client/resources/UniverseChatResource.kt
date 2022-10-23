@@ -13,7 +13,7 @@ import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatInfo
 import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatMessage
 import com.rpmtw.rpmtw_api_client.models.gson.adapters.TimestampAdapter
-import com.rpmtw.rpmtw_api_client.utilities.Utilities
+import com.rpmtw.rpmtw_api_client.util.Util
 import io.socket.client.Ack
 import io.socket.client.IO
 import io.socket.client.Manager
@@ -193,7 +193,7 @@ class UniverseChatResource(
 
             request.awaitStringResult().fold({
                 return@fold formatMessages(
-                    format, Utilities.jsonDeserialize(
+                    format, Util.jsonDeserialize(
                         it,
                         UniverseChatMessage::class.java,
                         gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampAdapter()).create()
@@ -216,14 +216,14 @@ class UniverseChatResource(
         return runBlocking {
             val url = "$apiBaseUrl/universe-chat/info"
             val request: Request = url.httpGet()
-            return@runBlocking Utilities.jsonDeserialize(request.awaitString(), UniverseChatInfo::class.java)
+            return@runBlocking Util.jsonDeserialize(request.awaitString(), UniverseChatInfo::class.java)
         }
     }
 
     private fun formatMessages(format: UniverseChatMessageFormat, message: UniverseChatMessage): UniverseChatMessage {
         val source = message.message
         val formatted: String = when (format) {
-            UniverseChatMessageFormat.MinecraftFormatting -> Utilities.markdownToMinecraftFormatting(source)
+            UniverseChatMessageFormat.MinecraftFormatting -> Util.markdownToMinecraftFormatting(source)
             UniverseChatMessageFormat.Markdown -> source
         }
         return message.copy(message = formatted)

@@ -11,7 +11,7 @@ import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatInfo
 import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatMessage
 import com.rpmtw.rpmtw_api_client.models.universe_chat.UniverseChatUserType
 import com.rpmtw.rpmtw_api_client.models.gson.adapters.TimestampAdapter
-import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
+import com.rpmtw.rpmtw_api_client.util.TestUtilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -53,7 +53,7 @@ internal class UniverseChatResourceTest {
             val user: CreateUserResult = client.authResource.createUser(
                 username = "Elizabethann Kowalewski",
                 password = "uByz1WVDhLM",
-                email = "sadae_hirschman8cj@gmail.com"
+                email = "jakeb_veneziai@gmail.com"
             )
             val token: String = user.token
             val resource: UniverseChatResource = client.universeChatResource

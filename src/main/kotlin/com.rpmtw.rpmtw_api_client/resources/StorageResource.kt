@@ -6,7 +6,7 @@ import com.github.kittinunf.fuel.httpGet
 import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.storage.Storage
-import com.rpmtw.rpmtw_api_client.utilities.Utilities
+import com.rpmtw.rpmtw_api_client.util.Util
 import kotlinx.coroutines.runBlocking
 
 class StorageResource(override val apiBaseUrl: String, override val globalToken: String?) : BaseResource {
@@ -19,7 +19,7 @@ class StorageResource(override val apiBaseUrl: String, override val globalToken:
             val url = "$apiBaseUrl/storage/$uuid"
             val request: Request = url.httpGet()
 
-            request.awaitStringResult().fold({ return@fold Utilities.jsonDeserialize(it, Storage::class.java) }, {
+            request.awaitStringResult().fold({ return@fold Util.jsonDeserialize(it, Storage::class.java) }, {
                 if (it.response.statusCode == 404) {
                     throw ModelNotFoundException(Storage::class)
                 }

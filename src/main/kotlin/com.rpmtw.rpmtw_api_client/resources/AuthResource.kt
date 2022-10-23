@@ -12,7 +12,7 @@ import com.rpmtw.rpmtw_api_client.exceptions.FailedGetDataException
 import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.models.auth.CreateUserResult
 import com.rpmtw.rpmtw_api_client.models.auth.User
-import com.rpmtw.rpmtw_api_client.utilities.Utilities
+import com.rpmtw.rpmtw_api_client.util.Util
 import kotlinx.coroutines.runBlocking
 
 class AuthResource(override val apiBaseUrl: String, override val globalToken: String?) : BaseResource {
@@ -30,7 +30,7 @@ class AuthResource(override val apiBaseUrl: String, override val globalToken: St
                 request = request.header("Authorization", "Bearer ${globalToken ?: token}")
             }
 
-            request.awaitStringResult().fold({ return@fold Utilities.jsonDeserialize(it, User::class.java) }, {
+            request.awaitStringResult().fold({ return@fold Util.jsonDeserialize(it, User::class.java) }, {
                 if (it.response.statusCode == 404) {
                     throw ModelNotFoundException(User::class)
                 }
@@ -50,7 +50,7 @@ class AuthResource(override val apiBaseUrl: String, override val globalToken: St
             val url = "$apiBaseUrl/auth/user/get-by-email/$email"
             val request: Request = url.httpGet()
 
-            request.awaitStringResult().fold({ return@fold Utilities.jsonDeserialize(it, User::class.java) }, {
+            request.awaitStringResult().fold({ return@fold Util.jsonDeserialize(it, User::class.java) }, {
                 if (it.response.statusCode == 404) {
                     throw ModelNotFoundException(User::class)
                 }
@@ -85,7 +85,7 @@ class AuthResource(override val apiBaseUrl: String, override val globalToken: St
             val request: Request = url.httpPost().jsonBody(gson.toJson(json))
 
             request.awaitStringResult().fold({
-                val user: User = Utilities.jsonDeserialize(it, User::class.java)
+                val user: User = Util.jsonDeserialize(it, User::class.java)
                 val jsonObject: JsonObject = JsonParser.parseString(it).asJsonObject
 
                 return@fold CreateUserResult(jsonObject["data"].asJsonObject["token"].asString, user)

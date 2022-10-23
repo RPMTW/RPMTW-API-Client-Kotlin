@@ -1,4 +1,4 @@
-package com.rpmtw.rpmtw_api_client.utilities
+package com.rpmtw.rpmtw_api_client.util
 
 import com.rpmtw.rpmtw_api_client.RPMTWApiClient
 

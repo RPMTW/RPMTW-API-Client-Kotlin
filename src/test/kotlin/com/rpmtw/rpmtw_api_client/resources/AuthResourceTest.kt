@@ -8,7 +8,7 @@ import com.rpmtw.rpmtw_api_client.mock.MockHttpClient
 import com.rpmtw.rpmtw_api_client.mock.MockHttpResponse
 import com.rpmtw.rpmtw_api_client.models.auth.CreateUserResult
 import com.rpmtw.rpmtw_api_client.models.auth.User
-import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
+import com.rpmtw.rpmtw_api_client.util.TestUtilities
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.BeforeTest
@@ -158,7 +158,7 @@ internal class CreateUser {
 
     private val username = "Marisella Jansen"
     private val password = "Kr0wXsHtCs"
-    private val email = "alcides_brunetazv@total.el"
+    private val email = "alcides_brunetazv@gmail.com"
     private val avatarStorageUUID = "50df3c51-4966-4bc1-8ab1-1d741385a52f"
 
     private val mockUser = User(

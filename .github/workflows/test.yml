@@ -49,7 +49,7 @@ jobs:
       - name: Start RPMTW Server
         run: |
           cd ${{ github.workspace }}/server
-          nohup dart run bin/server.dart RPMTW_SERVER_TEST_MODE=TRUE &
+          nohup dart run bin/main.dart RPMTW_SERVER_TEST_MODE=TRUE &
           sleep 2.5s
 
       # Client
@@ -103,7 +103,7 @@ jobs:
       - name: Start RPMTW Server
         run: |
           cd ${{ github.workspace }}/server
-          nohup dart run bin/server.dart RPMTW_SERVER_TEST_MODE=TRUE &
+          nohup dart run bin/main.dart RPMTW_SERVER_TEST_MODE=TRUE &
           sleep 2.5s
 
       # Client

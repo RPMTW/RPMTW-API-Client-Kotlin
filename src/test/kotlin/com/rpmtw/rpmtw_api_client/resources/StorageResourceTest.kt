@@ -6,7 +6,7 @@ import com.rpmtw.rpmtw_api_client.exceptions.ModelNotFoundException
 import com.rpmtw.rpmtw_api_client.mock.MockHttpClient
 import com.rpmtw.rpmtw_api_client.mock.MockHttpResponse
 import com.rpmtw.rpmtw_api_client.models.storage.Storage
-import com.rpmtw.rpmtw_api_client.utilities.TestUtilities
+import com.rpmtw.rpmtw_api_client.util.TestUtilities
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.BeforeTest
