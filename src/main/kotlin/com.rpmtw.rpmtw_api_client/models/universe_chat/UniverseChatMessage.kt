@@ -5,6 +5,12 @@ import java.sql.Timestamp
 data class UniverseChatMessage(
     val uuid: String,
     val username: String,
+    /**
+     * User identifier
+     * May be the RPMTW account uuid, Minecraft account uuid or Discord account id
+     * Format: `rpmtw:uuid`, `minecraft:uuid` or `discord:id`
+     */
+    val userIdentifier: String,
     val message: String,
     val nickname: String?,
     val avatarUrl: String?,

@@ -98,6 +98,7 @@ internal class UniverseChatResourceTest {
             assertEquals(messages.first().message, message)
             assertEquals(messages.first().nickname, nickname)
             assertEquals(messages.first().username, minecraftUsername)
+            assertEquals(messages.first().userIdentifier, "minecraft:$minecraftUUID")
             messages.first().avatarUrl?.let { assertContains(it, minecraftUUID) }
             assertEquals(messages.first().sentAt.before(Date(System.currentTimeMillis())), true)
             assertEquals(messages.first().userType, UniverseChatUserType.minecraft)
@@ -215,6 +216,7 @@ internal class UniverseChatResourceTest {
             assertEquals(messages.first().message, "§lBold§r")
             assertEquals(messages.first().nickname, nickname)
             assertEquals(messages.first().username, minecraftUsername)
+            assertEquals(messages.first().userIdentifier, "minecraft:$minecraftUUID")
             messages.first().avatarUrl?.let { assertContains(it, minecraftUUID) }
             assertEquals(messages.first().sentAt.before(Date(System.currentTimeMillis())), true)
             assertEquals(messages.first().userType, UniverseChatUserType.minecraft)
@@ -235,6 +237,7 @@ internal class UniverseChatResourceTest {
         val mockMessage = UniverseChatMessage(
             uuid = uuid,
             username = "Maleah Lasky",
+            userIdentifier = "minecraft:$minecraftUUID",
             message = "Hello, world!",
             nickname = "Meyer",
             avatarUrl = "https://deadlyjptynabmauzn.id",
